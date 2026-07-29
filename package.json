@@ -1,0 +1,49 @@
+{
+	"name": "obsidian-taskflow-v2",
+	"version": "2.0.1",
+	"description": "Org Mode tasks and agenda in your Obsidian vault: TODO keywords, SCHEDULED/DEADLINE planning, repeaters, a real org-agenda, plus areas, projects, filters, stats, and reviews.",
+	"main": "main.js",
+	"type": "module",
+	"scripts": {
+		"dev": "node esbuild.config.mjs",
+		"build": "npm run typecheck && node esbuild.config.mjs production",
+		"typecheck": "tsc -noEmit",
+		"lint": "eslint src tests",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"link": "node scripts/link-vault.mjs",
+		"setup:vault": "npm run build && node scripts/setup-vault.mjs",
+		"seed": "node scripts/copy-seeds.mjs",
+		"seed:v1": "node scripts/copy-seeds.mjs v1"
+	},
+	"keywords": [
+		"obsidian",
+		"tasks",
+		"org-mode",
+		"agenda",
+		"gtd"
+	],
+	"author": "James McCulley",
+	"license": "MIT",
+	"dependencies": {
+		"chrono-node": "^2.10.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"rrule": "^2.8.1",
+		"zustand": "^5.0.14"
+	},
+	"devDependencies": {
+		"@types/node": "^26.1.1",
+		"@types/react": "^18.3.31",
+		"@types/react-dom": "^18.3.7",
+		"builtin-modules": "^5.3.0",
+		"esbuild": "^0.28.1",
+		"eslint": "^10.7.0",
+		"eslint-config-prettier": "^10.1.8",
+		"obsidian": "^1.13.1",
+		"prettier": "^3.9.5",
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.64.0",
+		"vitest": "^4.1.10"
+	}
+}

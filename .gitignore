@@ -1,0 +1,11 @@
+node_modules/
+main.js
+data.json
+.env
+
+# The live test vault is disposable; only the seed content is versioned.
+# seed/ is the v2 (Org) fixture set, seed-v1/ the pre-migration one — the two
+# are the same content before and after conversion, so both stay versioned.
+test-vault/*
+!test-vault/seed/
+!test-vault/seed-v1/

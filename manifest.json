@@ -1,0 +1,9 @@
+{
+	"id": "taskflow-v2",
+	"name": "TaskFlow v2",
+	"version": "2.0.1",
+	"minAppVersion": "1.5.0",
+	"description": "Org Mode tasks and agenda in your Obsidian vault: TODO keywords, SCHEDULED/DEADLINE planning, repeaters, and a real org-agenda.",
+	"author": "James McCulley",
+	"isDesktopOnly": false
+}

@@ -1,0 +1,1035 @@
+/* TaskFlow plugin styles */
+
+.tf2-view {
+	padding: 0;
+	/* List accent colors */
+	--tf2-color-inbox: #4a90d9;
+	--tf2-color-today: #fbbe2e;
+	--tf2-color-upcoming: #e8536b;
+	--tf2-color-whenever: #2cc5cf;
+	--tf2-color-someday: #c0a774;
+	--tf2-color-history: #5ec76f;
+	--tf2-color-project: #4a90d9;
+}
+
+.tf2-app {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.tf2-app.is-wide {
+	flex-direction: row;
+}
+
+/* Sidebar (nav) */
+
+.tf2-sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	padding: var(--size-4-2);
+	overflow-y: auto;
+}
+
+.is-wide .tf2-sidebar {
+	width: 200px;
+	flex-shrink: 0;
+	border-right: 1px solid var(--background-modifier-border);
+	background: var(--background-secondary);
+}
+
+.tf2-nav-row {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-2);
+	width: 100%;
+	background: transparent;
+	box-shadow: none;
+	border: none;
+	padding: var(--size-2-2) var(--size-4-2);
+	border-radius: var(--radius-s);
+	color: var(--text-normal);
+	cursor: pointer;
+	text-align: left;
+	font-size: var(--font-ui-small);
+}
+
+.tf2-nav-row:hover {
+	background: var(--background-modifier-hover);
+}
+
+.tf2-nav-row.is-active {
+	background: var(--background-modifier-active-hover, var(--background-modifier-hover));
+	font-weight: var(--font-semibold);
+}
+
+.tf2-nav-label {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.tf2-nav-count {
+	color: var(--text-faint);
+	font-size: var(--font-ui-smaller);
+	font-variant-numeric: tabular-nums;
+}
+
+.tf2-nav-divider {
+	height: 1px;
+	background: var(--background-modifier-border);
+	margin: var(--size-4-2) var(--size-4-2);
+}
+
+.tf2-nav-area-header {
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-semibold);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	padding: 0;
+	gap: 0;
+}
+
+.tf2-nav-area-header .tf2-icon {
+	--icon-size: 14px;
+}
+
+.tf2-nav-chevron,
+.tf2-nav-area-name {
+	background: transparent;
+	box-shadow: none;
+	border: none;
+	color: inherit;
+	font: inherit;
+	text-transform: inherit;
+	letter-spacing: inherit;
+	cursor: pointer;
+	padding: var(--size-2-2);
+	display: flex;
+	align-items: center;
+}
+
+.tf2-nav-area-name {
+	flex: 1;
+	min-width: 0;
+	text-align: left;
+}
+
+.tf2-nav-area-name:hover {
+	color: var(--text-normal);
+}
+
+.tf2-nav-project {
+	padding-left: var(--size-4-3);
+}
+
+.tf2-nav-project.is-dimmed {
+	opacity: 0.55;
+}
+
+/* List icon colors */
+
+.tf2-icon {
+	display: inline-flex;
+	align-items: center;
+	color: var(--text-muted);
+}
+
+.tf2-list-icon-inbox { color: var(--tf2-color-inbox); }
+.tf2-list-icon-today { color: var(--tf2-color-today); }
+.tf2-list-icon-upcoming { color: var(--tf2-color-upcoming); }
+.tf2-list-icon-whenever { color: var(--tf2-color-whenever); }
+.tf2-list-icon-someday { color: var(--tf2-color-someday); }
+.tf2-list-icon-history { color: var(--tf2-color-history); }
+.tf2-list-icon-project { color: var(--tf2-color-project); }
+.tf2-list-icon-filter { color: var(--text-muted); }
+.tf2-list-icon-area { color: var(--tf2-color-someday); }
+
+.tf2-nav-new-filter {
+	color: var(--text-faint);
+}
+
+.tf2-nav-new-filter:hover {
+	color: var(--text-normal);
+}
+
+/* Progress pie */
+
+.tf2-pie {
+	width: 14px;
+	height: 14px;
+	flex-shrink: 0;
+	border-radius: 50%;
+	border: 1.5px solid currentColor;
+	color: var(--tf2-color-project);
+	box-sizing: border-box;
+}
+
+/* Content pane */
+
+.tf2-content {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-width: 0;
+}
+
+.tf2-content-header {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-2);
+	padding: var(--size-4-2) var(--size-4-3);
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.tf2-content-title {
+	margin: 0;
+	font-size: var(--font-ui-large);
+	font-weight: var(--font-bold);
+}
+
+.tf2-nav-toggle {
+	background: transparent;
+	box-shadow: none;
+	border: none;
+	padding: var(--size-2-1);
+	cursor: pointer;
+	color: var(--text-muted);
+}
+
+/* Group headers (Upcoming dates, project headings, History days) */
+
+.tf2-group-header {
+	display: flex;
+	align-items: baseline;
+	gap: var(--size-4-2);
+	margin: var(--size-4-3) var(--size-4-2) var(--size-2-1);
+	padding-bottom: var(--size-2-1);
+	border-bottom: 1px solid var(--background-modifier-border);
+	font-weight: var(--font-semibold);
+	color: var(--text-normal);
+}
+
+.tf2-group-header.is-overdue {
+	color: var(--text-error);
+}
+
+.tf2-group-date {
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-normal);
+	color: var(--text-faint);
+}
+
+.tf2-history-entry .tf2-log-done {
+	color: var(--tf2-color-history);
+}
+
+.tf2-history-entry .tf2-log-cancelled {
+	color: var(--text-faint);
+}
+
+.tf2-list {
+	overflow-y: auto;
+	padding: var(--size-4-2);
+}
+
+.tf2-empty {
+	padding: var(--size-4-4);
+	color: var(--text-faint);
+	text-align: center;
+}
+
+.tf2-task {
+	display: flex;
+	gap: var(--size-4-2);
+	align-items: flex-start;
+	padding: var(--size-2-3) var(--size-4-2);
+	border-radius: var(--radius-s);
+	cursor: default;
+	transition: background 0.1s ease;
+}
+
+.tf2-task:hover {
+	background: var(--background-modifier-hover);
+}
+
+.tf2-task.is-selected {
+	background: var(--background-modifier-active-hover, var(--background-modifier-hover));
+	box-shadow: inset 2px 0 0 var(--interactive-accent);
+}
+
+.tf2-task.is-lingering {
+	animation: tf2-linger 1.6s ease forwards;
+}
+
+@keyframes tf2-linger {
+	0% {
+		opacity: 1;
+	}
+	65% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+.tf2-dragging {
+	opacity: 0.4;
+}
+
+[draggable='true'] .tf2-task {
+	cursor: grab;
+}
+
+/* Custom checkbox */
+
+.tf2-task-checkbox {
+	appearance: none;
+	-webkit-appearance: none;
+	width: 16px;
+	height: 16px;
+	margin: 3px 0 0;
+	flex-shrink: 0;
+	border: 1.5px solid var(--background-modifier-border-hover, var(--background-modifier-border));
+	border-radius: 4px;
+	background: transparent;
+	cursor: pointer;
+	position: relative;
+	transition:
+		background 0.15s ease,
+		border-color 0.15s ease;
+}
+
+.tf2-task-checkbox:hover {
+	border-color: var(--interactive-accent);
+}
+
+.tf2-task-checkbox:checked {
+	background: var(--interactive-accent);
+	border-color: var(--interactive-accent);
+	animation: tf2-pop 0.25s ease;
+}
+
+.tf2-task-checkbox:checked::after {
+	content: '';
+	position: absolute;
+	left: 4px;
+	top: 1px;
+	width: 4px;
+	height: 8px;
+	border: solid var(--text-on-accent, #fff);
+	border-width: 0 2px 2px 0;
+	transform: rotate(45deg);
+}
+
+@keyframes tf2-pop {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.25);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+.tf2-task-checkbox[data-status='cancelled'] {
+	opacity: 0.4;
+	background: var(--background-modifier-border);
+	border-color: var(--background-modifier-border);
+}
+
+.tf2-task-body {
+	min-width: 0;
+	flex: 1;
+}
+
+.tf2-task-title {
+	line-height: var(--line-height-tight);
+}
+
+.tf2-task-title {
+	transition:
+		color 0.2s ease,
+		text-decoration-color 0.2s ease;
+}
+
+.tf2-task-title.is-closed {
+	color: var(--text-faint);
+	text-decoration: line-through;
+}
+
+/* Magic plus button */
+
+.tf2-plus {
+	position: absolute;
+	right: var(--size-4-4);
+	bottom: var(--size-4-4);
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	border: none;
+	background: var(--interactive-accent);
+	color: var(--text-on-accent, #fff);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	box-shadow: var(--shadow-s), 0 3px 10px rgba(0, 0, 0, 0.25);
+	transition: transform 0.12s ease;
+	z-index: 10;
+}
+
+.tf2-plus:hover {
+	transform: scale(1.08);
+}
+
+.tf2-plus .tf2-icon {
+	color: inherit;
+	--icon-size: 20px;
+}
+
+.tf2-content {
+	position: relative;
+}
+
+.tf2-app.is-narrow {
+	position: relative;
+}
+
+.tf2-app:focus {
+	outline: none;
+}
+
+.tf2-chip-deadline {
+	font-weight: var(--font-semibold);
+}
+
+.tf2-chip-priority {
+	font-weight: var(--font-bold);
+}
+
+.tf2-chip-priority.is-p1 {
+	color: var(--text-error);
+}
+
+.tf2-chip-priority.is-p2 {
+	color: var(--color-orange, #e0862e);
+}
+
+.tf2-chip-clickable {
+	cursor: pointer;
+}
+
+.tf2-chip-clickable:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+.tf2-roll-button {
+	background: transparent;
+	box-shadow: none;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	padding: 0 var(--size-2-2);
+	margin-left: auto;
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+	cursor: pointer;
+}
+
+.tf2-roll-button:hover {
+	color: var(--text-normal);
+	border-color: var(--interactive-accent);
+}
+
+.tf2-view-toggle {
+	background: transparent;
+	box-shadow: none;
+	border: none;
+	padding: var(--size-2-1);
+	margin-left: auto;
+	cursor: pointer;
+	color: var(--text-muted);
+}
+
+.tf2-view-toggle:hover {
+	color: var(--text-normal);
+}
+
+/* Kanban board */
+
+.tf2-board {
+	display: flex;
+	gap: var(--size-4-2);
+	padding: var(--size-4-2);
+	overflow-x: auto;
+	align-items: flex-start;
+	flex: 1;
+}
+
+.tf2-board-column {
+	flex: 0 0 240px;
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	padding: var(--size-2-3);
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-2-1);
+	max-height: 100%;
+	overflow-y: auto;
+}
+
+.tf2-board-column.is-dimmed {
+	opacity: 0.6;
+}
+
+.tf2-board-column-header {
+	display: flex;
+	align-items: baseline;
+	gap: var(--size-4-2);
+	font-weight: var(--font-semibold);
+	font-size: var(--font-ui-small);
+	padding: var(--size-2-1) var(--size-2-2) var(--size-2-2);
+}
+
+.tf2-board-column .tf2-task {
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+}
+
+.tf2-evening-header {
+	color: var(--tf2-color-someday);
+}
+
+.tf2-project-someday {
+	opacity: 0.6;
+}
+
+.tf2-checklist {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-2-1);
+	margin: var(--size-2-2) 0;
+	padding-left: var(--size-2-2);
+	border-left: 2px solid var(--background-modifier-border);
+}
+
+.tf2-checklist-item {
+	display: flex;
+	align-items: center;
+	gap: var(--size-2-3);
+	font-size: var(--font-ui-small);
+	cursor: pointer;
+}
+
+.tf2-checklist-checkbox {
+	width: 13px;
+	height: 13px;
+	margin: 0;
+}
+
+.tf2-checklist-checkbox:checked::after {
+	left: 3px;
+	top: 0;
+	width: 3px;
+	height: 7px;
+}
+
+.tf2-checklist-item .is-closed {
+	color: var(--text-faint);
+	text-decoration: line-through;
+}
+
+.tf2-nav-quickfind {
+	color: var(--text-muted);
+	margin-bottom: var(--size-2-2);
+}
+
+.tf2-sidebar-version {
+	margin-top: auto;
+	padding: var(--size-4-2) var(--size-4-2) var(--size-2-2);
+	font-size: var(--font-ui-smaller);
+	color: var(--text-faint);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--size-2-2);
+	user-select: text;
+}
+
+.tf2-reload {
+	background: transparent;
+	box-shadow: none;
+	border: none;
+	padding: var(--size-2-1);
+	cursor: pointer;
+	color: var(--text-faint);
+	display: flex;
+	align-items: center;
+}
+
+.tf2-reload:hover {
+	color: var(--text-normal);
+}
+
+.tf2-reload .tf2-icon {
+	--icon-size: 12px;
+	color: inherit;
+}
+
+/* Stats view */
+
+.tf2-list-icon-stats { color: #8f6ed5; }
+.tf2-list-icon-review { color: #5e9e6f; }
+
+/* Review view */
+
+.tf2-review {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow: hidden;
+}
+
+.tf2-review-hero {
+	margin: auto;
+	text-align: center;
+	padding: var(--size-4-4);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--size-4-2);
+	max-width: 320px;
+}
+
+.tf2-review-hero .tf2-icon {
+	--icon-size: 32px;
+}
+
+.tf2-review-hero h3 {
+	margin: 0;
+}
+
+.tf2-review-muted {
+	margin: 0;
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+}
+
+.tf2-review-header {
+	padding: var(--size-4-3) var(--size-4-3) var(--size-2-2);
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.tf2-review-header h3 {
+	margin: var(--size-2-1) 0;
+}
+
+.tf2-review-progress {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-faint);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.tf2-review-list {
+	flex: 1;
+}
+
+.tf2-review-footer {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--size-4-2);
+	padding: var(--size-4-2) var(--size-4-3);
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.tf2-stats {
+	padding: var(--size-4-3);
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-3);
+	overflow-y: auto;
+}
+
+.tf2-stat-tiles {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+	gap: var(--size-4-2);
+}
+
+.tf2-stat-tile {
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	padding: var(--size-4-2);
+	text-align: center;
+}
+
+.tf2-stat-value {
+	font-size: var(--font-ui-large);
+	font-weight: var(--font-bold);
+	font-variant-numeric: tabular-nums;
+	color: var(--text-normal);
+}
+
+.tf2-stat-label {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+}
+
+.tf2-streaks {
+	font-size: var(--font-ui-small);
+	color: var(--text-muted);
+}
+
+.tf2-heatmap-scroll {
+	overflow-x: auto;
+	padding-bottom: var(--size-2-2);
+}
+
+.tf2-heatmap {
+	display: grid;
+	grid-auto-flow: column;
+	grid-template-rows: repeat(7, 11px);
+	grid-auto-columns: 11px;
+	gap: 2px;
+	width: max-content;
+}
+
+/* Sequential ramp: one hue (the theme accent), light -> dark by mixing into
+   the surface — monotonic in both light and dark themes. Zero is a neutral
+   gray distinct from the ramp. */
+.tf2-heatcell {
+	width: 11px;
+	height: 11px;
+	border-radius: 2px;
+	background: var(--background-modifier-border);
+}
+
+.tf2-heatcell-level-0 {
+	background: var(--background-modifier-border);
+	opacity: 0.6;
+}
+
+.tf2-heatcell-level-1 {
+	background: color-mix(in srgb, var(--interactive-accent) 25%, var(--background-primary));
+}
+
+.tf2-heatcell-level-2 {
+	background: color-mix(in srgb, var(--interactive-accent) 50%, var(--background-primary));
+}
+
+.tf2-heatcell-level-3 {
+	background: color-mix(in srgb, var(--interactive-accent) 75%, var(--background-primary));
+}
+
+.tf2-heatcell-level-4 {
+	background: var(--interactive-accent);
+}
+
+.tf2-heatmap-legend {
+	display: flex;
+	align-items: center;
+	gap: 3px;
+	font-size: var(--font-ui-smaller);
+	color: var(--text-faint);
+}
+
+.tf2-heatmap-legend .tf2-heatcell {
+	display: inline-block;
+}
+
+.tf2-task-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--size-2-1);
+	margin-top: var(--size-2-1);
+}
+
+.tf2-chip {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+	background: var(--background-secondary-alt);
+	border-radius: var(--radius-s);
+	padding: 0 var(--size-2-2);
+	white-space: nowrap;
+}
+
+.tf2-chip-source {
+	color: var(--text-accent);
+	font-style: italic;
+}
+
+.tf2-chip-tag {
+	color: var(--text-muted);
+}
+
+.tf2-chip.is-overdue {
+	color: var(--text-error);
+}
+
+.tf2-date-detail {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-faint);
+}
+
+/* Quick capture modal */
+
+.tf2-capture-input {
+	width: 100%;
+	font-size: var(--font-ui-medium);
+}
+
+.tf2-capture-preview {
+	margin-top: var(--size-4-2);
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-2-1);
+}
+
+.tf2-capture-row {
+	display: flex;
+	gap: var(--size-4-2);
+	font-size: var(--font-ui-small);
+}
+
+.tf2-capture-label {
+	color: var(--text-muted);
+	min-width: 3.5em;
+}
+
+.tf2-capture-hint {
+	margin-top: var(--size-4-2);
+	font-size: var(--font-ui-smaller);
+	color: var(--text-faint);
+}
+
+/* --- Org keywords -------------------------------------------------------
+   The TODO keyword leads every task title and doubles as the control for
+   cycling it, so it reads as a pill rather than as part of the text. */
+
+.tf2-keyword {
+	display: inline-block;
+	margin-right: var(--size-4-1);
+	padding: 0 var(--size-2-2);
+	border-radius: var(--radius-s);
+	font-family: var(--font-monospace);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-bold);
+	letter-spacing: 0.03em;
+	cursor: pointer;
+	background: var(--background-modifier-hover);
+	color: var(--text-muted);
+}
+
+.tf2-keyword:hover {
+	background: var(--background-modifier-active-hover);
+}
+
+.tf2-keyword.is-todo {
+	color: var(--text-accent);
+}
+
+.tf2-keyword.is-next {
+	color: var(--color-green, #4caf50);
+}
+
+.tf2-keyword.is-waiting {
+	color: var(--color-orange, #e0862e);
+}
+
+.tf2-keyword.is-someday {
+	color: var(--text-faint);
+}
+
+.tf2-keyword.is-done,
+.tf2-keyword.is-cancelled {
+	color: var(--text-faint);
+	text-decoration: none;
+}
+
+.tf2-chip-priority.is-p3 {
+	color: var(--text-muted);
+}
+
+/* --- Agenda -------------------------------------------------------------
+   A window of days; each line carries a fixed-width gutter holding either a
+   clock time or org's own prefix ("Sched. 3x", "In 4 d."), so titles align
+   down the column the way they do in an org buffer. */
+
+.tf2-agenda {
+	display: flex;
+	flex-direction: column;
+}
+
+.tf2-agenda-toolbar {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-1);
+	padding: var(--size-4-2);
+	border-bottom: 1px solid var(--background-modifier-border);
+	position: sticky;
+	top: 0;
+	background: var(--background-primary);
+	z-index: 1;
+}
+
+.tf2-agenda-nav,
+.tf2-agenda-today,
+.tf2-agenda-span {
+	padding: var(--size-2-1) var(--size-2-3);
+	font-size: var(--font-ui-smaller);
+	background: transparent;
+	border: none;
+	border-radius: var(--radius-s);
+	color: var(--text-muted);
+	cursor: pointer;
+	box-shadow: none;
+}
+
+.tf2-agenda-nav:hover,
+.tf2-agenda-today:hover:not(:disabled),
+.tf2-agenda-span:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+.tf2-agenda-today:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+
+.tf2-agenda-spans {
+	margin-left: auto;
+	display: flex;
+	gap: 2px;
+}
+
+.tf2-agenda-span {
+	font-family: var(--font-monospace);
+	min-width: 2em;
+}
+
+.tf2-agenda-span.is-active {
+	background: var(--background-modifier-active-hover);
+	color: var(--text-accent);
+	font-weight: var(--font-semibold);
+}
+
+.tf2-agenda-header {
+	position: sticky;
+	top: 0;
+	background: var(--background-primary);
+}
+
+.tf2-agenda-day.is-today .tf2-agenda-header {
+	color: var(--text-accent);
+	font-weight: var(--font-bold);
+}
+
+.tf2-agenda-line {
+	display: flex;
+	align-items: flex-start;
+}
+
+.tf2-agenda-line .tf2-task {
+	flex: 1;
+	min-width: 0;
+}
+
+.tf2-agenda-gutter {
+	flex: 0 0 5.5em;
+	padding-top: var(--size-4-2);
+	padding-left: var(--size-4-2);
+	font-family: var(--font-monospace);
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.tf2-agenda-line.is-overdue .tf2-agenda-gutter {
+	color: var(--text-error);
+}
+
+.tf2-agenda-empty-day {
+	padding: var(--size-4-1) var(--size-4-3);
+	color: var(--text-faint);
+	font-size: var(--font-ui-smaller);
+}
+
+/* --- Agenda dispatcher --------------------------------------------------- */
+
+.tf2-dispatch-item {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-3);
+}
+
+.tf2-dispatch-key {
+	flex: 0 0 1.6em;
+	text-align: center;
+	padding: 2px 0;
+	border-radius: var(--radius-s);
+	background: var(--background-modifier-hover);
+	font-family: var(--font-monospace);
+	font-weight: var(--font-bold);
+	color: var(--text-accent);
+}
+
+/* --- Migration ----------------------------------------------------------- */
+
+.tf2-migration-note {
+	font-size: var(--font-ui-small);
+	color: var(--text-muted);
+}
+
+.tf2-migration-sample {
+	max-height: 14em;
+	overflow: auto;
+	padding: var(--size-4-2);
+	border-radius: var(--radius-s);
+	background: var(--background-secondary);
+	font-size: var(--font-ui-smaller);
+}
+
+.tf2-migration-sample code {
+	display: block;
+	white-space: pre-wrap;
+	background: transparent;
+	padding: 0;
+}
+
+.tf2-diff-before {
+	color: var(--text-error);
+}
+
+.tf2-diff-after {
+	color: var(--color-green, #4caf50);
+}
+
+/* The capture modal previews the exact block that will be written. */
+.tf2-capture-block {
+	margin-top: var(--size-4-2);
+	padding: var(--size-4-2);
+	border-radius: var(--radius-s);
+	background: var(--background-secondary);
+	font-size: var(--font-ui-smaller);
+	white-space: pre-wrap;
+}
+
+/* Unselected keyword toggles in the filter form read as plain buttons. */
+.tf2-filter-keyword-off {
+	opacity: 0.55;
+}
