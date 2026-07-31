@@ -32,6 +32,18 @@ Then:
 cp "$VAULT/.obsidian/plugins/taskflow/data.json" "$VAULT/.obsidian/plugins/taskflow-v2/data.json"
 ```
 
+### Updating
+
+`scripts/update-plugin.sh` updates an installed copy in place from the latest release. Copy it into the plugin folder once, then:
+
+```bash
+cd "$VAULT/.obsidian/plugins/taskflow-v2"
+./update-plugin.sh            # update to the latest release
+./update-plugin.sh --check    # compare versions, download nothing
+```
+
+It downloads to a temp directory and validates before replacing anything — a failed download can otherwise leave a GitHub error page sitting where `main.js` should be, and a plugin that won't load. `data.json` is never touched.
+
 ### Installing from source
 
 Building it yourself instead (and what to use on a dev machine) — point `.env` at your vault via `TEST_VAULT_PATH`, see `.env.example`:
