@@ -23,17 +23,13 @@ import { LIST_META } from './components/Sidebar';
 import { ObsidianIcon } from './components/ObsidianIcon';
 import { TaskList, TaskRows } from './components/TaskList';
 import { AgendaView } from './AgendaView';
-import { BoardView } from './BoardView';
 import { DateSuggestModal } from './DateSuggestModal';
 import { ReviewView } from './ReviewView';
-import { StatsView } from './StatsView';
 import type { TaskFlowView } from './TaskFlowView';
 
 interface ViewProps {
 	plugin: TaskFlowPlugin;
 	view: TaskFlowView;
-	/** Two-pane layout — the board option is only offered here. */
-	wide?: boolean;
 }
 
 function dayLabel(day: string): string {
@@ -193,14 +189,10 @@ function HistoryView({ plugin }: ViewProps) {
 	);
 }
 
-function ProjectView({ plugin, view, path, wide }: ViewProps & { path: string }) {
+function ProjectView({ plugin, view, path }: ViewProps & { path: string }) {
 	const tasks = useStore(plugin.store, (s) => s.tasks);
-	const mode = useStore(plugin.store, (s) => s.projectViewMode);
 	const groups = useMemo(() => selectProjectGroups(tasks, path), [tasks, path]);
 	const someday = useMemo(() => selectProjectSomedayTasks(tasks, path), [tasks, path]);
-	if (wide && mode === 'board') {
-		return <BoardView plugin={plugin} view={view} path={path} />;
-	}
 	if (groups.length === 0 && someday.length === 0)
 		return <div className="tf2-empty">No open tasks.</div>;
 	return (
@@ -239,14 +231,11 @@ export function contentTitle(route: Route, plugin: TaskFlowPlugin): { title: str
 	if (route.kind === 'review') {
 		return { title: 'Review', icon: 'clipboard-check' };
 	}
-	if (route.list === 'stats') {
-		return { title: 'Stats', icon: 'activity' };
-	}
 	const meta = LIST_META.find((m) => m.list === route.list);
 	return { title: meta?.label ?? '', icon: meta?.icon ?? 'list' };
 }
 
-export function Content({ plugin, view, wide }: ViewProps) {
+export function Content({ plugin, view }: ViewProps) {
 	const route = useStore(plugin.store, (s) => s.route);
 	const tasks = useStore(plugin.store, (s) => s.tasks);
 	const projects = useStore(plugin.store, (s) => s.projects);
@@ -256,13 +245,13 @@ export function Content({ plugin, view, wide }: ViewProps) {
 		return <AgendaView plugin={plugin} view={view} />;
 	}
 	if (route.kind === 'project') {
-		return <ProjectView plugin={plugin} view={view} path={route.path} wide={wide} />;
+		return <ProjectView plugin={plugin} view={view} path={route.path} />;
 	}
 	if (route.kind === 'area') {
 		return <AreaView plugin={plugin} view={view} name={route.name} />;
 	}
 	if (route.kind === 'review') {
-		return <ReviewView plugin={plugin} view={view} />;
+		return <ReviewView plugin={plugin} />;
 	}
 	if (route.kind === 'filter') {
 		const filter = filters.find((f) => f.id === route.id);
@@ -283,8 +272,6 @@ export function Content({ plugin, view, wide }: ViewProps) {
 			return <UpcomingView plugin={plugin} view={view} />;
 		case 'history':
 			return <HistoryView plugin={plugin} view={view} />;
-		case 'stats':
-			return <StatsView plugin={plugin} />;
 		case 'inbox':
 			return (
 				<TaskList

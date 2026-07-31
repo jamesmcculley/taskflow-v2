@@ -411,3 +411,35 @@ describe('todayISO', () => {
 		expect(todayISO(new Date(2026, 0, 3))).toBe('2026-01-03');
 	});
 });
+
+describe('list membership boundaries', () => {
+	const t = (over: Partial<Task>): Task =>
+		({
+			id: over.id ?? 'x',
+			title: 't',
+			file: 'f.md',
+			line: 0,
+			blockEnd: 0,
+			keyword: 'TODO',
+			status: 'todo',
+			tags: [],
+			order: 0,
+			...over,
+		}) as Task;
+
+	// Inbox is triage: a keyword other than TODO means the task has already been
+	// processed, so it must not still be sitting there awaiting a decision.
+	it('keeps NEXT and WAITING out of Inbox', () => {
+		const tasks = {
+			a: t({ id: 'a', keyword: 'NEXT' }),
+			b: t({ id: 'b', keyword: 'WAITING' }),
+			c: t({ id: 'c' }),
+		};
+		expect(selectInboxTasks(tasks).map((x) => x.id)).toEqual(['c']);
+	});
+
+	it('still keeps a plain undated, unfiled TODO in Inbox', () => {
+		const tasks = { c: t({ id: 'c' }) };
+		expect(selectInboxTasks(tasks).map((x) => x.id)).toEqual(['c']);
+	});
+});

@@ -180,3 +180,34 @@ describe('selectByKeyword', () => {
 		expect(selectByKeyword(tasks)).toHaveLength(2);
 	});
 });
+
+describe('selectByKeyword and someday', () => {
+	const t = (over: Partial<Task>): Task =>
+		({
+			id: over.id ?? 'x',
+			title: 't',
+			file: 'f.md',
+			line: 0,
+			blockEnd: 0,
+			keyword: 'TODO',
+			status: 'todo',
+			tags: [],
+			order: 0,
+			...over,
+		}) as Task;
+
+	// Deferring something you're blocked on shouldn't erase the record that
+	// someone owes you a reply.
+	it('keeps a someday-tagged WAITING task under Waiting', () => {
+		const tasks = { a: t({ id: 'a', keyword: 'WAITING', someday: true }) };
+		expect(selectByKeyword(tasks, 'WAITING').map((x) => x.id)).toEqual(['a']);
+	});
+
+	it('still hides someday tasks from the unfiltered sweep', () => {
+		const tasks = {
+			a: t({ id: 'a', someday: true }),
+			b: t({ id: 'b' }),
+		};
+		expect(selectByKeyword(tasks).map((x) => x.id)).toEqual(['b']);
+	});
+});

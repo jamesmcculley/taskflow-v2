@@ -106,7 +106,7 @@ The agenda is v2's primary view: a window of days, each listing the tasks whose 
 
 The toolbar steps the window back and forward, jumps home to today, and switches span between day / 3 days / week / fortnight. Defaults for span, deadline warning, and carry-forward live in settings.
 
-**The dispatcher** (`Agenda dispatcher…`) is Org's `C-c a`: type a single key to jump to a view — `a` weekly agenda, `d` today, `w` fortnight, `t` all open tasks, `n` NEXT actions, `W` waiting, `i` inbox, `u` upcoming, `s` someday, `l` history, `R` weekly review. The keys match Org's own where Org has one.
+**The dispatcher** (`Agenda dispatcher…`) is Org's `C-c a`: type a single key to jump to a view — `a` weekly agenda, `d` today, `w` fortnight, `t` unscheduled tasks, `n` NEXT actions, `W` waiting, `i` inbox, `u` upcoming, `s` someday, `l` history, `R` review. The keys match Org's own where Org has one.
 
 ## Views (the sidebar)
 
@@ -121,15 +121,14 @@ The toolbar steps the window back and forward, jumps home to today, and switches
 - **Someday** — `SOMEDAY` tasks, `:someday:`-tagged tasks, and tasks in `status: someday` projects.
 - **History** — completed/cancelled tasks from the index completion log, grouped by day, newest first. Right-click any completion for **Edit date…** if it was logged on the wrong day — it corrects the log entry, moves its daily-note journal line, and (if the task still shows that `CLOSED` stamp) corrects the stamp too. Completions are picked up no matter how they happened — clicking the checkbox in the sidebar, hand-typing `DONE`, or a change synced in from elsewhere: the indexer notices any done/cancelled task with no History entry yet, adds a `CLOSED` stamp if it's missing one, and logs it using that stamp's date. Editing a `CLOSED` date by hand syncs History to match on the next reindex, since markdown is always the source of truth.
 - **Projects** — under collapsible Area headers (`area: <name>` frontmatter) or standalone; each project view groups tasks by heading, with task-level Someday items dimmed at the bottom. **Areas are clickable** — an area header opens a view of all its projects' open tasks.
-- **Stats** — completion stat tiles (today / week / month / all time), streak tracking, and a scrollable 26-week heatmap built from the completion log.
-- **Review** — a guided weekly review: Inbox → overdue → every active project → Someday, one step at a time.
+- **Review** — look back and ahead over a **week, month or quarter**. The look-back is built from the completion log and grouped by area, then project. Star anything worth remembering and it becomes a *highlight*; highlights carry upward, so the month shows its weeks' and the quarter shows its months' and weeks'. **Write review note** renders the whole thing — highlights, the by-area breakdown with counts, what you're aiming at next, and your own notes — as a plain markdown file in your review folder. Nothing in it depends on the plugin, so it can be copied straight out.
 - **Quick search** — fuzzy search across lists, filters, areas, projects, and open tasks.
 
 In the narrow right sidebar the nav collapses behind a menu button; opened as a workspace tab it becomes a two-pane sidebar + content layout.
 
 Every task shows its **TODO keyword as a clickable pill** — clicking cycles TODO → NEXT → WAITING. A **source chip** (`#Note Name`) names the note it lives in, hidden inside that note's own project view where it would just repeat.
 
-Other interactions carried over from v1: click selects, double-click (or Enter) opens the note at the line, ↑/↓ move the selection, Space completes; drag and drop reorders within a list and persists in the index (never in your markdown); the floating ＋ button captures into the current context; **Board view** turns a project's headings into draggable columns in the wide layout; **Export History as CSV** writes `TaskFlow History.csv` to the vault root.
+Other interactions carried over from v1: click selects, double-click (or Enter) opens the note at the line, ↑/↓ move the selection, Space completes; drag and drop reorders within a list and persists in the index (never in your markdown); and the floating ＋ button captures into the current context.
 
 ## Repeats
 
@@ -164,7 +163,7 @@ NEXT Buy paint tomorrow #home !due friday >Home Renovation
 
 ## Commands
 
-All hotkey-bindable: **Open agenda**, **Open sidebar**, **Agenda dispatcher…**, **Quick capture**, **Quick search**, **Start weekly review**, **Roll all overdue tasks to today**, **Export History as CSV**, the two **migration** commands, and editor commands acting on the task at the cursor — cycle keyword, set keyword…, complete/uncomplete, cancel, priority A/B/C, tonight, someday, schedule today/tomorrow/pick, set deadline, clear scheduled date, move to project.
+All hotkey-bindable: **Open agenda**, **Open sidebar**, **Agenda dispatcher…**, **Quick capture**, **Quick search**, **Open review**, **Roll all overdue tasks to today**, the two **migration** commands, and editor commands acting on the task at the cursor — cycle keyword, set keyword…, complete/uncomplete, cancel, cycle priority, tonight, someday, schedule today, schedule pick…, set deadline, clear scheduled date, move to project.
 
 Editor commands resolve the task the cursor is *inside*, not just the headline — anywhere in a task's block counts, since a v2 task spans several lines.
 

@@ -24,8 +24,6 @@ export function App({ plugin, view }: { plugin: TaskFlowPlugin; view: TaskFlowVi
 	const [navOpen, setNavOpen] = useState(false);
 	const selectedId = useStore(plugin.store, (s) => s.selectedId);
 	const setSelectedId = useStore(plugin.store, (s) => s.select);
-	const projectViewMode = useStore(plugin.store, (s) => s.projectViewMode);
-	const setProjectViewMode = useStore(plugin.store, (s) => s.setProjectViewMode);
 
 	useEffect(() => {
 		const el = rootRef.current;
@@ -89,7 +87,10 @@ export function App({ plugin, view }: { plugin: TaskFlowPlugin; view: TaskFlowVi
 			e.target instanceof HTMLButtonElement
 		)
 			return;
-		if ((e.metaKey || e.ctrlKey) && e.key >= '1' && e.key <= '6') {
+		// Bounded by LIST_META rather than a hard-coded range: the list of lists
+		// has changed twice, and the range didn't follow it, so the last entries
+		// silently had no shortcut.
+		if ((e.metaKey || e.ctrlKey) && e.key >= '1' && e.key <= '9') {
 			const meta = LIST_META[Number(e.key) - 1];
 			if (meta) {
 				setRoute({ kind: 'list', list: meta.list });
@@ -151,20 +152,8 @@ export function App({ plugin, view }: { plugin: TaskFlowPlugin; view: TaskFlowVi
 							<div className="tf2-content-header">
 								<ObsidianIcon name={icon} className={iconClass} />
 								<h2 className="tf2-content-title">{title}</h2>
-								{route.kind === 'project' && (
-									<button
-										className="tf2-view-toggle"
-										aria-label={projectViewMode === 'board' ? 'List view' : 'Board view'}
-										title={projectViewMode === 'board' ? 'List view' : 'Board view'}
-										onClick={() =>
-											setProjectViewMode(projectViewMode === 'board' ? 'list' : 'board')
-										}
-									>
-										<ObsidianIcon name={projectViewMode === 'board' ? 'list' : 'layout-grid'} />
-									</button>
-								)}
 							</div>
-							<Content plugin={plugin} view={view} wide />
+							<Content plugin={plugin} view={view} />
 							{plusButton}
 						</div>
 					</>

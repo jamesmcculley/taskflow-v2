@@ -20,6 +20,21 @@ import { addDaysISO } from '../store/selectors';
 
 const REPEATER_RE = /^(\+\+|\.\+|\+)(\d+)([hdwmy])$/;
 
+/**
+ * The units this engine can actually advance. Org also has `h`, and the
+ * timestamp parser reads it — a stamp carrying `++1h` must still yield its
+ * date rather than failing to parse — but every date in the index is
+ * day-granular, so there is nothing for an hour repeater to move. It used to
+ * shift by zero days, which meant completing such a task rescheduled it to the
+ * same day forever. `isAdvanceable` sends it down the "repeater we can't
+ * honour" path instead, where completeTask reports it and completes once.
+ */
+type DateRepeaterUnit = Exclude<RepeaterUnit, 'h'>;
+
+function isAdvanceable(r: OrgRepeater): r is OrgRepeater & { unit: DateRepeaterUnit } {
+	return r.unit !== 'h';
+}
+
 export function parseRepeater(text: string): OrgRepeater | null {
 	const m = REPEATER_RE.exec(text.trim());
 	if (!m) return null;
@@ -30,10 +45,10 @@ export function parseRepeater(text: string): OrgRepeater | null {
 	};
 }
 
-function shift(iso: string, value: number, unit: RepeaterUnit): string {
+function shift(iso: string, value: number, unit: DateRepeaterUnit): string {
 	const [y, m, d] = iso.split('-').map(Number);
 	const date = new Date(y ?? 1970, (m ?? 1) - 1, d ?? 1);
-	if (unit === 'd' || unit === 'h') return addDaysISO(iso, unit === 'h' ? 0 : value);
+	if (unit === 'd') return addDaysISO(iso, value);
 	if (unit === 'w') return addDaysISO(iso, value * 7);
 	if (unit === 'y') date.setFullYear(date.getFullYear() + value);
 	else date.setMonth(date.getMonth() + value);
@@ -45,8 +60,9 @@ function shift(iso: string, value: number, unit: RepeaterUnit): string {
 	return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
-/** Advances one date by a repeater, per that repeater's kind. */
-export function advanceDate(iso: string, repeater: OrgRepeater, today: string): string {
+/** Advances one date by a repeater, per that repeater's kind. Null if the unit is sub-day. */
+export function advanceDate(iso: string, repeater: OrgRepeater, today: string): string | null {
+	if (!isAdvanceable(repeater)) return null;
 	if (repeater.kind === '.+') return shift(today, repeater.value, repeater.unit);
 	let next = shift(iso, repeater.value, repeater.unit);
 	if (repeater.kind === '+') return next;

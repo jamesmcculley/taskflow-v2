@@ -126,13 +126,6 @@ export function Sidebar({
 			))}
 
 			<button
-				className={`tf2-nav-row tf2-nav-stats ${routeIsList(route, 'stats') ? 'is-active' : ''}`}
-				onClick={() => go({ kind: 'list', list: 'stats' })}
-			>
-				<ObsidianIcon name="activity" className="tf2-list-icon-stats" />
-				<span className="tf2-nav-label">Stats</span>
-			</button>
-			<button
 				className={`tf2-nav-row tf2-nav-review ${route.kind === 'review' ? 'is-active' : ''}`}
 				onClick={() => go({ kind: 'review' })}
 			>

@@ -181,3 +181,24 @@ describe('rrule helpers still used by the fallback', () => {
 		expect(parseRecurrence('whenever I feel like it')).toBeNull();
 	});
 });
+
+describe('sub-day repeaters', () => {
+	// Every date in the index is day-granular, so an hour repeater has nothing
+	// to move. It used to shift by zero days, which rescheduled a completed task
+	// to the same day forever; now it reports as unhonourable and completes once.
+	it('does not advance an hour repeater', () => {
+		const today = '2026-07-31';
+		expect(advanceDate(today, { kind: '++', value: 1, unit: 'h' }, today)).toBeNull();
+		expect(advanceDate(today, { kind: '+', value: 2, unit: 'h' }, today)).toBeNull();
+		expect(advanceDate(today, { kind: '.+', value: 3, unit: 'h' }, today)).toBeNull();
+		expect(advanceRecurrence({ scheduled: today, repeater: '++1h' }, today)).toBeNull();
+	});
+
+	it('still advances day and larger units', () => {
+		const today = '2026-07-31';
+		expect(advanceDate(today, { kind: '++', value: 1, unit: 'd' }, today)).toBe('2026-08-01');
+		expect(advanceRecurrence({ scheduled: today, repeater: '++1w' }, today)).toEqual({
+			scheduled: '2026-08-07',
+		});
+	});
+});

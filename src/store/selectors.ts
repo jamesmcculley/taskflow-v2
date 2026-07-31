@@ -104,6 +104,13 @@ export function selectInboxTasks(tasks: Record<string, Task>): Task[] {
 		.filter(
 			(t) =>
 				t.status === 'todo' &&
+				// Giving a task a keyword other than plain TODO *is* triage — a
+				// NEXT item has been shortlisted and a WAITING one is parked on
+				// someone else, so neither is still awaiting a decision. Leaving
+				// them here contradicted Inbox's own rule that processing a task
+				// moves it out, and put the one genuinely un-actionable state
+				// (WAITING) in the list you work from.
+				t.keyword === 'TODO' &&
 				t.project === undefined &&
 				!isSomedayTask(t) &&
 				t.scheduled === undefined &&

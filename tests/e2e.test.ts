@@ -372,20 +372,7 @@ describe('e2e: moving tasks', () => {
 		expect(design).toContain('- TODO Call mom ^t-mom');
 	});
 
-	it('moveToHeading (board drag) relocates within the file', async () => {
-		await h.actions.moveToHeading('t-mood', 'Build');
-		const project = h.fileContent('Projects/Site.md');
-		const build = project.slice(project.indexOf('## Build'));
-		expect(build).toContain('^t-mood');
-		const design = project.slice(project.indexOf('## Design'), project.indexOf('## Build'));
-		expect(design).not.toContain('^t-mood');
-	});
 
-	it('moveToHeading undefined inserts above the first heading', async () => {
-		await h.actions.moveToHeading('t-deploy', undefined);
-		const project = h.fileContent('Projects/Site.md');
-		expect(project.indexOf('^t-deploy')).toBeLessThan(project.indexOf('# Site'));
-	});
 
 	it('toggleSomeday (board drop onto the Someday column) writes the SOMEDAY keyword', async () => {
 		await h.actions.toggleSomeday('t-mood');

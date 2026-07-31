@@ -13,7 +13,8 @@ import type { ExternalCompletionCandidate, StampDrift } from '../store/logReconc
 import { todayISO } from '../store/selectors';
 import type { ChecklistItem, ProjectInfo, ProjectStatus, Task } from '../types';
 import { own } from '../utils';
-import { generateTaskId } from './ids';
+import { CHECKLIST_RE, applyIdAssignments, generateTaskId, stripTrailingIds } from './ids';
+import type { IdAssignment } from './ids';
 
 const DEBOUNCE_MS = 250;
 
@@ -67,11 +68,10 @@ function repeaterText(org: OrgTask): string | undefined {
  */
 const MAYBE_HEADLINE_RE = /^[\s]*(?:(?:[-*+]|\d+[.)])\s+)?(?:\[[ xX-]\]\s+)?[A-Z]{2,12}\b/m;
 
-const CHECKLIST_RE = /^(\s*)(?:[-*+]|\d+[.)])\s+\[(.)\]\s?(.*)$/;
-const CHECKLIST_ID_RE = /\s+\^([A-Za-z0-9-]+)\s*$/;
-
 export class TaskIndexer {
 	private debounceTimers = new Map<string, number>();
+	/** Per-file chain of pending write-backs; see queueWrite. */
+	private writeChain = new Map<string, Promise<void>>();
 	private resolvedScanDone = false;
 
 	constructor(private plugin: TaskFlowPlugin) {}
@@ -110,6 +110,9 @@ export class TaskIndexer {
 	stop(): void {
 		for (const timer of this.debounceTimers.values()) window.clearTimeout(timer);
 		this.debounceTimers.clear();
+		// Drop the chains too: a queued write-back belongs to a plugin instance
+		// that is going away, and nothing should still be editing the vault.
+		this.writeChain.clear();
 	}
 
 	async fullScan(): Promise<void> {
@@ -272,11 +275,13 @@ export class TaskIndexer {
 
 		this.reconcilePersisted(tasks);
 		store.setFileIndex(file.path, tasks, project);
-		if (missingIds.length > 0) void this.assignIds(file, missingIds);
+		if (missingIds.length > 0) this.queueWrite(file.path, () => this.assignIds(file, missingIds));
 		const unlogged = findUnloggedCompletions(this.plugin.persisted.log, completionCandidates);
-		if (unlogged.length > 0) void this.recordUnloggedCompletions(file, unlogged);
+		if (unlogged.length > 0) {
+			this.queueWrite(file.path, () => this.recordUnloggedCompletions(file, unlogged));
+		}
 		const drift = findStampDrift(this.plugin.persisted.log, completionCandidates);
-		if (drift.length > 0) void this.applyStampDrift(drift);
+		if (drift.length > 0) this.queueWrite(file.path, () => this.applyStampDrift(drift));
 		return tasks.length;
 	}
 
@@ -300,10 +305,12 @@ export class TaskIndexer {
 			const m = CHECKLIST_RE.exec(raw);
 			if (!m || (m[1] ?? '').length <= baseIndent) break;
 
-			let body = m[3] ?? '';
-			const idm = CHECKLIST_ID_RE.exec(body);
-			let id = idm?.[1];
-			if (idm) body = body.slice(0, idm.index);
+			// Strips every trailing `^id`, not just the last: more than one is
+			// damage from the duplicate-ID bug, and taking only the last left the
+			// earlier one in the item's title.
+			const stripped = stripTrailingIds(m[3] ?? '');
+			const body = stripped.rest;
+			let id = stripped.ids[stripped.ids.length - 1];
 			if (id === undefined || seenInFile.has(id)) {
 				const fresh = generateTaskId(existingIds);
 				missingIds.push({ line: i, id: fresh, replaces: id });
@@ -367,28 +374,35 @@ export class TaskIndexer {
 	 * Edits run bottom-up: adding an `:ID:` property grows the block, which
 	 * would shift every line number below it.
 	 */
-	private async assignIds(
-		file: TFile,
-		missing: { line: number; id: string; replaces?: string }[],
-	): Promise<void> {
+	/**
+	 * Runs one file's write-backs one at a time, in the order they were decided.
+	 *
+	 * indexFile doesn't await them, so a second index pass can start while the
+	 * first pass's write is still pending. `vault.process` serialises the
+	 * read-modify-write itself, but not the *decision* that preceded it: two
+	 * passes could both read a file with no IDs, both decide a line needed one,
+	 * and both write. Chaining per path means the later write is at least
+	 * applied to the earlier one's output, where the guards in
+	 * applyIdAssignments can see the ID is already there.
+	 *
+	 * It also keeps an ID write from interleaving with a CLOSED backfill, which
+	 * inserts a line and so shifts every line number below it.
+	 */
+	private queueWrite(path: string, run: () => Promise<void>): void {
+		const next = (this.writeChain.get(path) ?? Promise.resolve()).then(run).catch((err: unknown) => {
+			console.error(`[taskflow-v2] write-back failed for ${path}`, err);
+		});
+		this.writeChain.set(path, next);
+		void next.then(() => {
+			if (this.writeChain.get(path) === next) this.writeChain.delete(path);
+		});
+	}
+
+	private async assignIds(file: TFile, missing: IdAssignment[]): Promise<void> {
 		const idStyle = this.plugin.persisted.settings.idStyle;
 		await this.plugin.app.vault.process(file, (content) => {
 			const { lines, sep } = splitLines(content);
-			for (const { line, id, replaces } of [...missing].sort((a, b) => b.line - a.line)) {
-				const raw = lines[line];
-				if (raw === undefined) continue;
-				if (isTaskHeadline(raw)) {
-					editTaskBlock(lines, line, idStyle, (task) => {
-						// If a line moved or changed since parsing, leave it alone:
-						// the resulting 'changed' event re-indexes and retries.
-						if (task.blockId === undefined || task.blockId === replaces) task.blockId = id;
-					});
-				} else if (replaces === undefined) {
-					lines[line] = raw.replace(/\s*$/, '') + ` ^${id}`;
-				} else {
-					lines[line] = raw.replace(/\^[A-Za-z0-9-]+(\s*)$/, `^${id}$1`);
-				}
-			}
+			applyIdAssignments(lines, missing, idStyle);
 			return lines.join(sep);
 		});
 	}

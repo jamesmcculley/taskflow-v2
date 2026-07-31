@@ -81,6 +81,22 @@ export interface SavedFilter {
 	text?: string;
 }
 
+/**
+ * What a review keeps for one period. Starred highlights are IDs rather than
+ * copies of the entry, so a highlight follows the completion if its title is
+ * later corrected — and rolls up to longer periods by ID.
+ */
+export interface PeriodNote {
+	/** Task IDs starred as highlights, in the order they were starred. */
+	highlights: string[];
+	/** Free text: what the period amounted to. */
+	narrative?: string;
+	/** What should be true by the end of the next period. */
+	focus?: string;
+	/** ISO datetime of the last edit. */
+	updatedAt: string;
+}
+
 /** One entry in the index-owned completion log (survives recurring rewrites). */
 export interface CompletionEntry {
 	taskId: string;

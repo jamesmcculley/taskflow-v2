@@ -8,7 +8,6 @@ export type ListId =
 	| 'whenever'
 	| 'someday'
 	| 'history'
-	| 'stats'
 	/** Org's NEXT keyword — the actionable shortlist. */
 	| 'next'
 	/** Org's WAITING keyword — delegated or blocked. */
@@ -35,15 +34,12 @@ export interface TaskFlowState {
 	route: Route;
 	/** Selected task in the panel (keyboard nav + Quick search target). */
 	selectedId: string | null;
-	/** Project content layout (board only offered in the wide layout). */
-	projectViewMode: 'list' | 'board';
 	/** First day the agenda shows; null means "today", re-read on each render. */
 	agendaStart: string | null;
 	/** Days the agenda spans, seeded from settings and changed by its header. */
 	agendaSpan: number;
 	setRoute: (route: Route) => void;
 	select: (id: string | null) => void;
-	setProjectViewMode: (mode: 'list' | 'board') => void;
 	setAgendaStart: (date: string | null) => void;
 	setAgendaSpan: (span: number) => void;
 	/** Always pass a fresh array — the store must never alias the persisted log. */
@@ -71,12 +67,10 @@ export function createTaskFlowStore() {
 		orders: {},
 		route: { kind: 'agenda' },
 		selectedId: null,
-		projectViewMode: 'list',
 		agendaStart: null,
 		agendaSpan: 7,
 		setRoute: (route) => set({ route }),
 		select: (selectedId) => set({ selectedId }),
-		setProjectViewMode: (projectViewMode) => set({ projectViewMode }),
 		setAgendaStart: (agendaStart) => set({ agendaStart }),
 		setAgendaSpan: (agendaSpan) => set({ agendaSpan }),
 		setLog: (log) => set({ log }),

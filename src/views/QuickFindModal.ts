@@ -28,7 +28,6 @@ export class QuickFindModal extends FuzzySuggestModal<FindChoice> {
 				label,
 				go: () => goTo({ kind: 'list', list }),
 			})),
-			{ label: 'Stats', go: () => goTo({ kind: 'list', list: 'stats' }) },
 			{ label: 'Review', go: () => goTo({ kind: 'review' }) },
 		];
 		const filters: FindChoice[] = state.filters.map((f) => ({

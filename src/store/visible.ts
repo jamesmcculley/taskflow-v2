@@ -87,7 +87,6 @@ export function selectVisibleTasks(route: Route, state: VisibleState, today: str
 		case 'waiting':
 			return inOrder(selectByKeyword(tasks, 'WAITING'), 'list:waiting');
 		case 'history':
-		case 'stats':
 			return [];
 	}
 }

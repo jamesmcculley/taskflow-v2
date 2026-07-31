@@ -21,14 +21,14 @@ const ENTRIES: DispatchEntry[] = [
 	{ key: 'a', label: 'Agenda for the week', description: 'SCHEDULED and DEADLINE items, 7 days', route: { kind: 'agenda' }, span: 7 },
 	{ key: 'd', label: 'Agenda for today', description: 'Just today', route: { kind: 'agenda' }, span: 1 },
 	{ key: 'w', label: 'Agenda for the fortnight', description: '14 days', route: { kind: 'agenda' }, span: 14 },
-	{ key: 't', label: 'All open tasks', description: 'Every TODO, ignoring dates', route: { kind: 'list', list: 'whenever' } },
+	{ key: 't', label: 'Unscheduled tasks', description: 'Open work in active projects with no date', route: { kind: 'list', list: 'whenever' } },
 	{ key: 'n', label: 'NEXT actions', description: 'Tasks marked NEXT', route: { kind: 'list', list: 'next' } },
 	{ key: 'W', label: 'WAITING on', description: 'Blocked or delegated tasks', route: { kind: 'list', list: 'waiting' } },
 	{ key: 'i', label: 'Inbox', description: 'Unfiled, undated tasks', route: { kind: 'list', list: 'inbox' } },
 	{ key: 'u', label: 'Upcoming', description: 'Dated after today, grouped by day', route: { kind: 'list', list: 'upcoming' } },
 	{ key: 's', label: 'Someday', description: 'Deferred tasks and projects', route: { kind: 'list', list: 'someday' } },
 	{ key: 'l', label: 'History', description: 'The completion log, newest first', route: { kind: 'list', list: 'history' } },
-	{ key: 'R', label: 'Weekly review', description: 'Guided Inbox → projects → Someday pass', route: { kind: 'review' } },
+	{ key: 'R', label: 'Review', description: 'Look back and ahead over a week, month or quarter', route: { kind: 'review' } },
 ];
 
 export class AgendaDispatchModal extends SuggestModal<DispatchEntry> {

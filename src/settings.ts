@@ -2,7 +2,7 @@ import { PluginSettingTab, Setting } from 'obsidian';
 import type { App } from 'obsidian';
 import type TaskFlowPlugin from './main';
 import type { IdStyle } from './org/serialize';
-import type { CompletionEntry, SavedFilter } from './types';
+import type { CompletionEntry, PeriodNote, SavedFilter } from './types';
 
 export interface TaskFlowSettings {
 	debugPerf: boolean;
@@ -25,6 +25,8 @@ export interface TaskFlowSettings {
 	deadlineWarningDays: number;
 	/** Show tasks whose SCHEDULED date has passed on every day until done. */
 	showScheduledPast: boolean;
+	/** Folder review notes are written to. Empty = vault root. */
+	reviewFolder: string;
 }
 
 export const DEFAULT_SETTINGS: TaskFlowSettings = {
@@ -36,6 +38,7 @@ export const DEFAULT_SETTINGS: TaskFlowSettings = {
 	agendaSpan: 7,
 	deadlineWarningDays: 14,
 	showScheduledPast: true,
+	reviewFolder: 'Reviews',
 };
 
 /**
@@ -53,8 +56,8 @@ export interface PersistedData {
 	log: CompletionEntry[];
 	/** Pinned smart-list filters shown in the sidebar. */
 	filters: SavedFilter[];
-	/** ISO datetime of the last completed weekly review. */
-	lastReview?: string;
+	/** Per-period review notes, keyed `2026-W31` / `2026-07` / `2026-Q3`. */
+	reviews: Record<string, PeriodNote>;
 	/** ISO datetime of the last v1 -> v2 migration run, if any. */
 	migratedAt?: string;
 }
@@ -65,14 +68,29 @@ export const DEFAULT_PERSISTED: PersistedData = {
 	completedAt: {},
 	log: [],
 	filters: [],
+	reviews: {},
 };
 
 export class TaskFlowSettingTab extends PluginSettingTab {
+	private excludedFoldersTimer = 0;
+
 	constructor(
 		app: App,
 		private plugin: TaskFlowPlugin,
 	) {
 		super(app, plugin);
+	}
+
+	/** Closing the tab mid-edit must still apply (and not leave a timer armed). */
+	override hide(): void {
+		if (this.excludedFoldersTimer !== 0) {
+			window.clearTimeout(this.excludedFoldersTimer);
+			this.excludedFoldersTimer = 0;
+			void (async () => {
+				await this.plugin.savePersisted();
+				await this.plugin.rescan();
+			})();
+		}
 	}
 
 	override display(): void {
@@ -137,13 +155,35 @@ export class TaskFlowSettingTab extends PluginSettingTab {
 				text
 					.setPlaceholder('Templates\nArchive')
 					.setValue(this.plugin.persisted.settings.excludedFolders.join('\n'))
-					.onChange(async (value) => {
+					// Debounced: onChange fires per keystroke, and applying it
+					// re-reads every markdown file in the vault. Typing "Templates"
+					// used to cost nine full scans and nine writes to data.json.
+					.onChange((value) => {
 						this.plugin.persisted.settings.excludedFolders = value
 							.split('\n')
 							.map((s) => s.trim())
 							.filter((s) => s !== '');
+						window.clearTimeout(this.excludedFoldersTimer);
+						this.excludedFoldersTimer = window.setTimeout(() => {
+							void (async () => {
+								await this.plugin.savePersisted();
+								await this.plugin.rescan();
+							})();
+						}, 600);
+					}),
+			);
+
+		new Setting(containerEl).setName('Review').setHeading();
+		new Setting(containerEl)
+			.setName('Review folder')
+			.setDesc('Where review notes are written. Leave empty for the vault root.')
+			.addText((text) =>
+				text
+					.setPlaceholder('Reviews')
+					.setValue(this.plugin.persisted.settings.reviewFolder)
+					.onChange(async (value) => {
+						this.plugin.persisted.settings.reviewFolder = value.trim();
 						await this.plugin.savePersisted();
-						await this.plugin.rescan();
 					}),
 			);
 

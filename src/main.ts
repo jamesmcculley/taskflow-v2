@@ -1,4 +1,4 @@
-import { Notice, Plugin, TFile } from 'obsidian';
+import { Notice, Plugin } from 'obsidian';
 import type { Editor } from 'obsidian';
 import { CaptureModal } from './capture/CaptureModal';
 import { DailySync } from './daily/DailySync';
@@ -8,7 +8,6 @@ import { TaskActions } from './mutations/actions';
 import { isTaskHeadline, parseTaskAt } from './org/parser';
 import { DEFAULT_PERSISTED, DEFAULT_SETTINGS, TaskFlowSettingTab } from './settings';
 import type { PersistedData } from './settings';
-import { buildHistoryCsv } from './store/csv';
 import { createTaskFlowStore } from './store/store';
 import type { TaskFlowStore } from './store/store';
 import { own } from './utils';
@@ -77,8 +76,8 @@ export default class TaskFlowPlugin extends Plugin {
 			callback: () => new QuickFindModal(this).open(),
 		});
 		this.addCommand({
-			id: 'weekly-review',
-			name: 'Start weekly review',
+			id: 'review',
+			name: 'Open review',
 			callback: () => {
 				this.store.getState().setRoute({ kind: 'review' });
 				void this.activateView();
@@ -88,11 +87,6 @@ export default class TaskFlowPlugin extends Plugin {
 			id: 'roll-overdue',
 			name: 'Roll all overdue tasks to today',
 			callback: () => void this.actions.rollOverdueToToday(),
-		});
-		this.addCommand({
-			id: 'export-history-csv',
-			name: 'Export History as CSV',
-			callback: () => void this.exportHistoryCsv(),
 		});
 
 		this.addCommand({
@@ -112,17 +106,12 @@ export default class TaskFlowPlugin extends Plugin {
 		this.addTaskCommand('set-keyword', 'Set TODO keyword of task under cursor…', (id) => {
 			new KeywordSuggestModal(this.app, (keyword) => void this.actions.setKeyword(id, keyword)).open();
 		});
-		this.addTaskCommand('priority-a', 'Toggle priority [#A] for task under cursor', (id) => {
-			const task = this.store.getState().tasks[id];
-			void this.actions.setTaskPriority(id, task?.priority === 1 ? null : 1);
-		});
-		this.addTaskCommand('priority-b', 'Toggle priority [#B] for task under cursor', (id) => {
-			const task = this.store.getState().tasks[id];
-			void this.actions.setTaskPriority(id, task?.priority === 2 ? null : 2);
-		});
-		this.addTaskCommand('priority-c', 'Toggle priority [#C] for task under cursor', (id) => {
-			const task = this.store.getState().tasks[id];
-			void this.actions.setTaskPriority(id, task?.priority === 3 ? null : 3);
+		// One command for a three-state field, cycling A -> B -> C -> none, the
+		// way org's `C-c ,` walks the priority cookie.
+		this.addTaskCommand('cycle-priority', 'Cycle priority of task under cursor', (id) => {
+			const current = this.store.getState().tasks[id]?.priority;
+			const next = current === undefined ? 1 : current === 3 ? null : ((current + 1) as 2 | 3);
+			void this.actions.setTaskPriority(id, next);
 		});
 		this.addTaskCommand('toggle-evening', 'Toggle Tonight for task under cursor', (id) =>
 			void this.actions.toggleEvening(id),
@@ -140,9 +129,6 @@ export default class TaskFlowPlugin extends Plugin {
 		);
 		this.addTaskCommand('schedule-today', 'Schedule task under cursor: today', (id) =>
 			void this.actions.scheduleTask(id, 'today'),
-		);
-		this.addTaskCommand('schedule-tomorrow', 'Schedule task under cursor: tomorrow', (id) =>
-			void this.actions.scheduleTask(id, 'tomorrow'),
 		);
 		this.addTaskCommand('clear-schedule', 'Clear SCHEDULED date of task under cursor', (id) =>
 			void this.actions.scheduleTask(id, null),
@@ -232,15 +218,6 @@ export default class TaskFlowPlugin extends Plugin {
 		}).open();
 	}
 
-	private async exportHistoryCsv(): Promise<void> {
-		const csv = buildHistoryCsv(this.persisted.log, this.store.getState().projects);
-		const path = 'TaskFlow History.csv';
-		const existing = this.app.vault.getAbstractFileByPath(path);
-		if (existing instanceof TFile) await this.app.vault.modify(existing, csv);
-		else await this.app.vault.create(path, csv);
-		new Notice(`TaskFlow: exported ${this.persisted.log.length} entries to ${path}`);
-	}
-
 	async activateView(): Promise<void> {
 		const { workspace } = this.app;
 		let leaf = workspace.getLeavesOfType(VIEW_TYPE_TASKFLOW)[0];
@@ -261,7 +238,7 @@ export default class TaskFlowPlugin extends Plugin {
 			completedAt: raw.completedAt ?? {},
 			log: raw.log ?? [],
 			filters: raw.filters ?? [],
-			lastReview: raw.lastReview,
+			reviews: raw.reviews ?? {},
 			migratedAt: raw.migratedAt,
 		};
 		this.store.getState().setLog([...this.persisted.log]);

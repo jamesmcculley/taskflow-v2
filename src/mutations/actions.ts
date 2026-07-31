@@ -15,7 +15,6 @@ import {
 	findChecklistLine,
 	findTaskBlock,
 	insertTaskBlock,
-	insertTaskBlockBeforeHeadings,
 	setCheckboxState,
 	splitLines,
 } from './blockEdits';
@@ -284,22 +283,6 @@ export class TaskActions {
 			new Notice(`TaskFlow: rolled ${overdue.length} task${overdue.length === 1 ? '' : 's'} to today.`);
 		}
 		return overdue.length;
-	}
-
-	/** Moves a task under a different heading within its own file (board drag). */
-	async moveToHeading(id: string, heading: string | undefined): Promise<void> {
-		const task = this.getTask(id);
-		if (!task || task.heading === heading) return;
-		const file = this.plugin.app.vault.getAbstractFileByPath(task.file);
-		if (!(file instanceof TFile)) return;
-		await this.plugin.app.vault.process(file, (content) => {
-			const lifted = extractTaskBlock(content, id, task.line);
-			if (!lifted) return content;
-			return heading !== undefined
-				? insertTaskBlock(lifted.rest, lifted.block, heading)
-				: insertTaskBlockBeforeHeadings(lifted.rest, lifted.block);
-		});
-		this.plugin.store.getState().patchTask(id, { heading });
 	}
 
 	/** Persists a manual sort order for one list: index within `ids` wins. */

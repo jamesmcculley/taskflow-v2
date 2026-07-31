@@ -76,10 +76,16 @@ export function parseHeadline(
 
 	let rest = m[4] ?? '';
 
+	// Consume *every* trailing `^id`, not just the last. A headline should only
+	// ever carry one; more than one is damage from the duplicate-ID bug, and
+	// stripping only the last left the earlier one stuck in the title (and
+	// re-emitted forever). Taking the last as the real ID keeps the parse
+	// stable, so a repaired line indexes as the same task it did while broken.
 	let blockId: string | undefined;
-	const bm = BLOCK_ID_RE.exec(rest);
-	if (bm) {
-		blockId = bm[1];
+	for (;;) {
+		const bm = BLOCK_ID_RE.exec(rest);
+		if (!bm) break;
+		blockId ??= bm[1];
 		rest = rest.slice(0, bm.index);
 	}
 

@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-taskflow-v2",
-	"version": "2.0.1",
+	"version": "2.0.2",
 	"description": "Org Mode tasks and agenda in your Obsidian vault: TODO keywords, SCHEDULED/DEADLINE planning, repeaters, a real org-agenda, plus areas, projects, filters, stats, and reviews.",
 	"main": "main.js",
 	"type": "module",

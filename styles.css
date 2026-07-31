@@ -449,62 +449,7 @@
 	border-color: var(--interactive-accent);
 }
 
-.tf2-view-toggle {
-	background: transparent;
-	box-shadow: none;
-	border: none;
-	padding: var(--size-2-1);
-	margin-left: auto;
-	cursor: pointer;
-	color: var(--text-muted);
-}
-
-.tf2-view-toggle:hover {
-	color: var(--text-normal);
-}
-
 /* Kanban board */
-
-.tf2-board {
-	display: flex;
-	gap: var(--size-4-2);
-	padding: var(--size-4-2);
-	overflow-x: auto;
-	align-items: flex-start;
-	flex: 1;
-}
-
-.tf2-board-column {
-	flex: 0 0 240px;
-	background: var(--background-secondary);
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-m);
-	padding: var(--size-2-3);
-	display: flex;
-	flex-direction: column;
-	gap: var(--size-2-1);
-	max-height: 100%;
-	overflow-y: auto;
-}
-
-.tf2-board-column.is-dimmed {
-	opacity: 0.6;
-}
-
-.tf2-board-column-header {
-	display: flex;
-	align-items: baseline;
-	gap: var(--size-4-2);
-	font-weight: var(--font-semibold);
-	font-size: var(--font-ui-small);
-	padding: var(--size-2-1) var(--size-2-2) var(--size-2-2);
-}
-
-.tf2-board-column .tf2-task {
-	background: var(--background-primary);
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-s);
-}
 
 .tf2-evening-header {
 	color: var(--tf2-color-someday);
@@ -600,24 +545,8 @@
 	overflow: hidden;
 }
 
-.tf2-review-hero {
-	margin: auto;
-	text-align: center;
-	padding: var(--size-4-4);
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: var(--size-4-2);
-	max-width: 320px;
-}
 
-.tf2-review-hero .tf2-icon {
-	--icon-size: 32px;
-}
 
-.tf2-review-hero h3 {
-	margin: 0;
-}
 
 .tf2-review-muted {
 	margin: 0;
@@ -625,25 +554,9 @@
 	font-size: var(--font-ui-small);
 }
 
-.tf2-review-header {
-	padding: var(--size-4-3) var(--size-4-3) var(--size-2-2);
-	border-bottom: 1px solid var(--background-modifier-border);
-}
 
-.tf2-review-header h3 {
-	margin: var(--size-2-1) 0;
-}
 
-.tf2-review-progress {
-	font-size: var(--font-ui-smaller);
-	color: var(--text-faint);
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-}
 
-.tf2-review-list {
-	flex: 1;
-}
 
 .tf2-review-footer {
 	display: flex;
@@ -653,100 +566,143 @@
 	border-top: 1px solid var(--background-modifier-border);
 }
 
-.tf2-stats {
-	padding: var(--size-4-3);
+.tf2-review-periods {
 	display: flex;
-	flex-direction: column;
-	gap: var(--size-4-3);
-	overflow-y: auto;
+	gap: var(--size-4-1);
+	padding: var(--size-4-2) var(--size-4-3) 0;
 }
 
-.tf2-stat-tiles {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-	gap: var(--size-4-2);
-}
-
-.tf2-stat-tile {
-	background: var(--background-secondary);
+.tf2-review-period {
+	flex: 1;
+	padding: var(--size-4-1) 0;
+	background: transparent;
 	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-m);
-	padding: var(--size-4-2);
-	text-align: center;
+	border-radius: var(--radius-s);
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	cursor: pointer;
 }
 
-.tf2-stat-value {
-	font-size: var(--font-ui-large);
-	font-weight: var(--font-bold);
-	font-variant-numeric: tabular-nums;
+.tf2-review-period:hover {
 	color: var(--text-normal);
 }
 
-.tf2-stat-label {
+.tf2-review-period.is-active {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+	font-weight: var(--font-semibold);
+}
+
+.tf2-review-nav {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-2);
+	padding: var(--size-4-2) var(--size-4-3);
+}
+
+.tf2-review-nav button {
+	background: transparent;
+	border: none;
+	color: var(--text-muted);
+	cursor: pointer;
+	padding: var(--size-4-1);
+}
+
+.tf2-review-nav button:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
+.tf2-review-title {
+	flex: 1;
+	text-align: center;
+}
+
+.tf2-review-title h3 {
+	margin: 0;
+	font-size: var(--font-ui-medium);
+}
+
+.tf2-review-loose {
+	margin: 0 var(--size-4-3) var(--size-4-2);
+	padding: var(--size-4-2);
+	border-radius: var(--radius-s);
+	background: var(--background-modifier-hover);
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+}
+
+.tf2-review-section {
+	padding: var(--size-4-2) var(--size-4-3);
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.tf2-review-section h4 {
+	margin: 0 0 var(--size-4-2);
+	font-size: var(--font-ui-small);
+	color: var(--text-normal);
+}
+
+.tf2-review-area {
+	margin-bottom: var(--size-4-3);
+}
+
+.tf2-review-area-header {
+	display: flex;
+	justify-content: space-between;
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-semibold);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--text-muted);
+	padding-bottom: var(--size-4-1);
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.tf2-review-project {
+	margin: var(--size-4-2) 0 var(--size-4-1);
 	font-size: var(--font-ui-smaller);
 	color: var(--text-muted);
 }
 
-.tf2-streaks {
+.tf2-review-entry {
+	display: flex;
+	align-items: baseline;
+	gap: var(--size-4-2);
+	padding: 2px 0;
 	font-size: var(--font-ui-small);
+}
+
+.tf2-review-star {
+	background: transparent;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	color: var(--text-faint);
+	line-height: 1;
+}
+
+.tf2-review-star:hover {
 	color: var(--text-muted);
 }
 
-.tf2-heatmap-scroll {
-	overflow-x: auto;
-	padding-bottom: var(--size-2-2);
+.tf2-review-star.is-on {
+	color: var(--color-yellow);
 }
 
-.tf2-heatmap {
-	display: grid;
-	grid-auto-flow: column;
-	grid-template-rows: repeat(7, 11px);
-	grid-auto-columns: 11px;
-	gap: 2px;
-	width: max-content;
-}
-
-/* Sequential ramp: one hue (the theme accent), light -> dark by mixing into
-   the surface — monotonic in both light and dark themes. Zero is a neutral
-   gray distinct from the ramp. */
-.tf2-heatcell {
-	width: 11px;
-	height: 11px;
-	border-radius: 2px;
-	background: var(--background-modifier-border);
-}
-
-.tf2-heatcell-level-0 {
-	background: var(--background-modifier-border);
-	opacity: 0.6;
-}
-
-.tf2-heatcell-level-1 {
-	background: color-mix(in srgb, var(--interactive-accent) 25%, var(--background-primary));
-}
-
-.tf2-heatcell-level-2 {
-	background: color-mix(in srgb, var(--interactive-accent) 50%, var(--background-primary));
-}
-
-.tf2-heatcell-level-3 {
-	background: color-mix(in srgb, var(--interactive-accent) 75%, var(--background-primary));
-}
-
-.tf2-heatcell-level-4 {
-	background: var(--interactive-accent);
-}
-
-.tf2-heatmap-legend {
-	display: flex;
-	align-items: center;
-	gap: 3px;
+.tf2-review-from {
+	flex: 0 0 auto;
+	min-width: 5.5em;
 	font-size: var(--font-ui-smaller);
 	color: var(--text-faint);
 }
 
-.tf2-heatmap-legend .tf2-heatcell {
-	display: inline-block;
+.tf2-review-text {
+	width: 100%;
+	min-height: 5em;
+	resize: vertical;
+	font-size: var(--font-ui-small);
+	font-family: inherit;
 }
 
 .tf2-task-meta {

@@ -10,11 +10,19 @@ Shipped 2026-07-27. Full port of v1 (0.14.0) onto Org syntax:
 
 **The agenda** — a day-spanning view with Org's own placement rules (sticky past `SCHEDULED`, `DEADLINE` warning window, one line per reason), Org's line prefixes (`Sched. 3x`, `In 4 d.`, `3 d. ago`), a span toggle, and an `org-agenda`-style single-key dispatcher.
 
-**Ported from v1, unchanged in behaviour** — Inbox/Today/Upcoming/Whenever/Someday/History, projects and areas, pinned filters, quick capture, daily-note sync, stats, weekly review, board view, CSV export, drag-reorder, keyboard nav.
+**Ported from v1, unchanged in behaviour** — Inbox/Today/Upcoming/Whenever/Someday/History, projects and areas, pinned filters, quick capture, daily-note sync, drag-reorder, keyboard nav.
 
 **New in v2** — `NEXT` and `WAITING` lists, keyword pills that cycle on click, keyword-aware sorting and filters, the agenda dispatcher, the `:REPEAT:` fallback for repeats no repeater expresses, and an ID-style setting.
 
 **Migration** — dry-run report command, confirm-and-convert command with per-file backups, ID-preserving and idempotent, with `test-vault/seed-v1/` ↔ `test-vault/seed/` as a live fixture pair.
+
+## v2.0.2 — Trim and review ✅
+
+Shipped 2026-07-31. Fixed the duplicate `^t-` id bug, hour repeaters that never advanced, a full vault rescan per keystroke in Excluded folders, NEXT/WAITING lingering in Inbox, and `Cmd+1–9` reaching only six of eight lists.
+
+Cut Stats, Board view, CSV export and `moveToHeading`; folded three priority commands into one and dropped `schedule-tomorrow` (28 commands → 24).
+
+Rebuilt **Review** as a week/month/quarter look-back and look-ahead: completions grouped by area and project, starred highlights that roll up from weeks into months into quarters, and a **Write review note** command that renders the period as plain markdown.
 
 ## v2.1 — Org fidelity
 

@@ -152,8 +152,22 @@ export function agendaDayLabel(date: string, today: string): string {
  * entirely, optionally narrowed to a keyword. This is the counterpart to the
  * date-driven agenda — the "what could I do" list rather than "what's today".
  */
+/**
+ * Open tasks, optionally narrowed to one TODO keyword.
+ *
+ * Someday tasks are hidden from the *unfiltered* sweep — that's the "everything
+ * I could work on" list, and deferred work isn't on it. But a keyword query is
+ * an explicit ask for that state, so it answers honestly: a WAITING task
+ * carrying the legacy `:someday:` tag still shows under Waiting, because
+ * deferring something you're blocked on shouldn't erase the record that someone
+ * owes you a reply.
+ */
 export function selectByKeyword(tasks: Record<string, Task>, keyword?: string): Task[] {
 	return Object.values(tasks)
-		.filter((t) => t.status === 'todo' && !isSomedayTask(t) && (keyword === undefined || t.keyword === keyword))
+		.filter(
+			(t) =>
+				t.status === 'todo' &&
+				(keyword === undefined ? !isSomedayTask(t) : t.keyword === keyword),
+		)
 		.sort(compareTasks);
 }
