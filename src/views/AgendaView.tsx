@@ -100,18 +100,45 @@ function AgendaDayBlock({
 	view: TaskFlowView;
 }) {
 	const total = day.timed.length + day.untimed.length;
+	const isToday = day.date === today;
+	// Tonight is a *sub-order* of today, not a day of its own: a task flagged
+	// :tonight: is still scheduled today, it just wants to be read last. Only
+	// today's block splits them out — the flag means nothing on a future day.
+	const evening = isToday ? day.untimed.filter((e) => e.task.evening === true) : [];
+	const untimed = isToday ? day.untimed.filter((e) => e.task.evening !== true) : day.untimed;
+	const overdue = day.timed
+		.concat(day.untimed)
+		.some((e) => e.reason === 'past-scheduled' || e.reason === 'past-deadline');
+
 	return (
-		<div className={`tf2-agenda-day${day.date === today ? ' is-today' : ''}`}>
+		<div className={`tf2-agenda-day${isToday ? ' is-today' : ''}`}>
 			<div className="tf2-group-header tf2-agenda-header">
 				{agendaDayLabel(day.date, today)}
 				{total > 0 && <span className="tf2-group-date">{total}</span>}
+				{isToday && overdue && (
+					<button
+						className="tf2-roll-button"
+						title="Reschedule all overdue tasks to today"
+						onClick={() => void plugin.actions.rollOverdueToToday()}
+					>
+						→ Today
+					</button>
+				)}
 			</div>
 			{day.timed.map((entry) => (
 				<AgendaLine key={`t-${entry.task.id}`} entry={entry} plugin={plugin} view={view} />
 			))}
-			{day.untimed.map((entry) => (
+			{untimed.map((entry) => (
 				<AgendaLine key={`${entry.reason}-${entry.task.id}`} entry={entry} plugin={plugin} view={view} />
 			))}
+			{evening.length > 0 && (
+				<>
+					<div className="tf2-evening-header">🌙 Tonight</div>
+					{evening.map((entry) => (
+						<AgendaLine key={`e-${entry.reason}-${entry.task.id}`} entry={entry} plugin={plugin} view={view} />
+					))}
+				</>
+			)}
 			{total === 0 && <div className="tf2-agenda-empty-day">—</div>}
 		</div>
 	);

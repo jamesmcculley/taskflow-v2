@@ -132,10 +132,6 @@ export function selectTodayTasks(tasks: Record<string, Task>, today: string): Ta
 		.sort(compareTasks);
 }
 
-function compareByEffectiveDate(a: Task, b: Task): number {
-	return (effectiveDate(a) ?? '').localeCompare(effectiveDate(b) ?? '') || compareTasks(a, b);
-}
-
 export interface TodayGroups {
 	/** Dated before today — surfaced above today's items, visually flagged. */
 	overdue: Task[];
@@ -153,41 +149,6 @@ export function selectTodayGroups(tasks: Record<string, Task>, today: string): T
 		today: current.filter((t) => t.evening !== true),
 		evening: current.filter((t) => t.evening === true),
 	};
-}
-
-export interface UpcomingGroup {
-	date: string;
-	tasks: Task[];
-}
-
-/** Open tasks dated after today, grouped by their effective date, ascending. */
-export function selectUpcomingGroups(tasks: Record<string, Task>, today: string): UpcomingGroup[] {
-	const byDate = new Map<string, Task[]>();
-	for (const t of Object.values(tasks)) {
-		if (t.status !== 'todo' || isSomedayTask(t)) continue;
-		const date = effectiveDate(t);
-		if (date === undefined || date <= today) continue;
-		const list = byDate.get(date) ?? [];
-		list.push(t);
-		byDate.set(date, list);
-	}
-	return [...byDate.entries()]
-		.sort(([a], [b]) => a.localeCompare(b))
-		.map(([date, list]) => ({ date, tasks: list.sort(compareByEffectiveDate) }));
-}
-
-/** Upcoming group header: Tomorrow, weekday names this week, then "Jul 25". */
-export function upcomingLabel(date: string, today: string): string {
-	if (date === addDaysISO(today, 1)) return 'Tomorrow';
-	const [y, m, d] = date.split('-').map(Number);
-	const dt = new Date(y ?? 1970, (m ?? 1) - 1, d ?? 1);
-	if (date <= endOfWeekISO(today)) return dt.toLocaleDateString(undefined, { weekday: 'long' });
-	const sameYear = date.slice(0, 4) === today.slice(0, 4);
-	return dt.toLocaleDateString(undefined, {
-		month: 'short',
-		day: 'numeric',
-		...(sameYear ? {} : { year: 'numeric' }),
-	});
 }
 
 /** Whenever: open tasks in active projects with no scheduled date. */

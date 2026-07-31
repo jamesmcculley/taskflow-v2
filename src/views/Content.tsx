@@ -12,10 +12,7 @@ import {
 	selectProjectGroups,
 	selectProjectSomedayTasks,
 	selectSomedayTasks,
-	selectTodayGroups,
-	selectUpcomingGroups,
 	todayISO,
-	upcomingLabel,
 } from '../store/selectors';
 import type { Route } from '../store/store';
 import type { CompletionEntry } from '../types';
@@ -40,50 +37,6 @@ function dayLabel(day: string): string {
 	return dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
-function TodayView({ plugin, view }: ViewProps) {
-	const tasks = useStore(plugin.store, (s) => s.tasks);
-	const groups = useMemo(() => selectTodayGroups(tasks, todayISO()), [tasks]);
-	return (
-		<div className="tf2-list">
-			{groups.overdue.length > 0 && (
-				<>
-					<div className="tf2-group-header is-overdue">
-						Overdue
-						<button
-							className="tf2-roll-button"
-							title="Reschedule all overdue tasks to today"
-							onClick={() => void plugin.actions.rollOverdueToToday()}
-						>
-							→ Today
-						</button>
-					</div>
-					<TaskRows tasks={groups.overdue} plugin={plugin} view={view} />
-				</>
-			)}
-			{groups.overdue.length > 0 && groups.today.length > 0 && (
-				<div className="tf2-group-header">Today</div>
-			)}
-			<TaskRows
-				tasks={groups.today}
-				plugin={plugin}
-				view={view}
-				orderKey="list:today"
-				emptyMessage={
-					groups.overdue.length === 0 && groups.evening.length === 0
-						? 'Nothing scheduled for today.'
-						: undefined
-				}
-			/>
-			{groups.evening.length > 0 && (
-				<>
-					<div className="tf2-group-header tf2-evening-header">🌙 Tonight</div>
-					<TaskRows tasks={groups.evening} plugin={plugin} view={view} orderKey="list:today-evening" />
-				</>
-			)}
-		</div>
-	);
-}
-
 function AreaView({ plugin, view, name }: ViewProps & { name: string }) {
 	const tasks = useStore(plugin.store, (s) => s.tasks);
 	const projects = useStore(plugin.store, (s) => s.projects);
@@ -95,26 +48,6 @@ function AreaView({ plugin, view, name }: ViewProps & { name: string }) {
 				<div key={project.path}>
 					<div className="tf2-group-header">{project.name}</div>
 					<TaskRows tasks={list} plugin={plugin} view={view} hideSource />
-				</div>
-			))}
-		</div>
-	);
-}
-
-function UpcomingView({ plugin, view }: ViewProps) {
-	const tasks = useStore(plugin.store, (s) => s.tasks);
-	const groups = useMemo(() => selectUpcomingGroups(tasks, todayISO()), [tasks]);
-	if (groups.length === 0) return <div className="tf2-empty">Nothing upcoming.</div>;
-	const today = todayISO();
-	return (
-		<div className="tf2-list">
-			{groups.map(({ date, tasks: list }) => (
-				<div key={date}>
-					<div className="tf2-group-header">
-						{upcomingLabel(date, today)}
-						<span className="tf2-group-date">{date}</span>
-					</div>
-					<TaskRows tasks={list} plugin={plugin} view={view} />
 				</div>
 			))}
 		</div>
@@ -266,10 +199,6 @@ export function Content({ plugin, view }: ViewProps) {
 		);
 	}
 	switch (route.list) {
-		case 'today':
-			return <TodayView plugin={plugin} view={view} />;
-		case 'upcoming':
-			return <UpcomingView plugin={plugin} view={view} />;
 		case 'history':
 			return <HistoryView plugin={plugin} view={view} />;
 		case 'inbox':

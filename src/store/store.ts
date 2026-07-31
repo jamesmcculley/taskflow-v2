@@ -3,8 +3,6 @@ import type { CompletionEntry, ProjectInfo, SavedFilter, Task } from '../types';
 
 export type ListId =
 	| 'inbox'
-	| 'today'
-	| 'upcoming'
 	| 'whenever'
 	| 'someday'
 	| 'history'

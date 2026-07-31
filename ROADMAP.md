@@ -24,6 +24,10 @@ Cut Stats, Board view, CSV export and `moveToHeading`; folded three priority com
 
 Rebuilt **Review** as a week/month/quarter look-back and look-ahead: completions grouped by area and project, starred highlights that roll up from weeks into months into quarters, and a **Write review note** command that renders the period as plain markdown.
 
+## v2.0.3 — One dated view ✅
+
+Shipped 2026-07-31. Folded Today and Upcoming into the Agenda: every dated task was already in the agenda *and* in whichever list matched its date. Today's block gained the **→ Today** roll button and the **🌙 Tonight** split so nothing was lost. Sidebar: 8 lists → 6.
+
 ## v2.1 — Org fidelity
 
 - **Effort and clocking**: `:EFFORT:` property with a column in the agenda; `CLOCK:` entries in the `LOGBOOK` drawer, with start/stop commands and a clocked-time total per day.

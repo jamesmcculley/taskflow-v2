@@ -8,8 +8,6 @@ import {
 	selectProjectGroups,
 	selectProjectSomedayTasks,
 	selectSomedayTasks,
-	selectTodayGroups,
-	selectUpcomingGroups,
 } from './selectors';
 import type { Route } from './store';
 import type { ProjectInfo, SavedFilter, Task } from '../types';
@@ -68,16 +66,6 @@ export function selectVisibleTasks(route: Route, state: VisibleState, today: str
 	switch (route.list) {
 		case 'inbox':
 			return inOrder(selectInboxTasks(tasks), 'list:inbox');
-		case 'today': {
-			const groups = selectTodayGroups(tasks, today);
-			return [
-				...groups.overdue,
-				...inOrder(groups.today, 'list:today'),
-				...inOrder(groups.evening, 'list:today-evening'),
-			];
-		}
-		case 'upcoming':
-			return selectUpcomingGroups(tasks, today).flatMap((g) => g.tasks);
 		case 'whenever':
 			return inOrder(selectWheneverTasks(tasks), 'list:whenever');
 		case 'someday':

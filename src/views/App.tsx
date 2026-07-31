@@ -71,7 +71,7 @@ export function App({ plugin, view }: { plugin: TaskFlowPlugin; view: TaskFlowVi
 				destPath: route.path,
 				destLabel: project?.name ?? route.path,
 			}).open();
-		} else if (route.kind === 'list' && route.list === 'today') {
+		} else if (route.kind === 'agenda') {
 			new CaptureModal(plugin, { scheduled: todayISO() }).open();
 		} else {
 			new CaptureModal(plugin).open();

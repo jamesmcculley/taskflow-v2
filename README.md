@@ -1,6 +1,6 @@
 # TaskFlow v2
 
-An Obsidian plugin that turns your vault into an Org Mode task manager. Tasks are plain markdown list items carrying Org's own syntax — TODO keywords, `[#A]` priority cookies, `SCHEDULED:`/`DEADLINE:` planning lines, `:tag:` lists, and `PROPERTIES`/`LOGBOOK` drawers — and the plugin gives you a real **org-agenda** over them, plus Inbox / Next / Today / Upcoming / Waiting / Whenever / Someday / History views.
+An Obsidian plugin that turns your vault into an Org Mode task manager. Tasks are plain markdown list items carrying Org's own syntax — TODO keywords, `[#A]` priority cookies, `SCHEDULED:`/`DEADLINE:` planning lines, `:tag:` lists, and `PROPERTIES`/`LOGBOOK` drawers — and the plugin gives you a real **org-agenda** over them, plus Inbox / Next / Waiting / Whenever / Someday / History views.
 
 **Markdown is the source of truth.** The plugin's persisted index only owns manual sort order, completion history, and repeat bookkeeping — deleting `data.json` loses nothing else.
 
@@ -76,7 +76,7 @@ A task is a list item whose first word is a TODO keyword. Everything below it, u
 | `+1w` `++1w` `.+1w` | Repeaters on a stamp — see [Repeats](#repeats) |
 | `:work:urgent:` | Tags, at the end of the headline |
 | `:someday:` | v1's task-level Someday — still read, but `SOMEDAY` is the keyword to write |
-| `:tonight:` | Shows in Today's evening section |
+| `:tonight:` | Sorts to a Tonight section under today in the agenda |
 | `^t-a1b2c3` | Stable ID, assigned by the plugin on first index |
 
 **The headline is a list item.** Bare `TODO …` lines parse fine too, but consecutive unindented lines collapse into one paragraph in markdown, which would run the planning line onto the headline in reading view. Writing tasks as list items keeps the planning line and drawers rendering as part of the same item. The parser accepts both, so hand-written or pasted org indexes either way.
@@ -106,16 +106,14 @@ The agenda is v2's primary view: a window of days, each listing the tasks whose 
 
 The toolbar steps the window back and forward, jumps home to today, and switches span between day / 3 days / week / fortnight. Defaults for span, deadline warning, and carry-forward live in settings.
 
-**The dispatcher** (`Agenda dispatcher…`) is Org's `C-c a`: type a single key to jump to a view — `a` weekly agenda, `d` today, `w` fortnight, `t` unscheduled tasks, `n` NEXT actions, `W` waiting, `i` inbox, `u` upcoming, `s` someday, `l` history, `R` review. The keys match Org's own where Org has one.
+**The dispatcher** (`Agenda dispatcher…`) is Org's `C-c a`: type a single key to jump to a view — `a` weekly agenda, `d` today, `w` fortnight, `t` unscheduled tasks, `n` NEXT actions, `W` waiting, `i` inbox, `s` someday, `l` history, `R` review. The keys match Org's own where Org has one.
 
 ## Views (the sidebar)
 
-**Agenda** leads the nav, then the fixed lists, then Areas with their projects (progress pies included):
+**Agenda** leads the nav and is the only dated view: today, overdue, and everything ahead, windowed by span (`D` / `3D` / `W` / `F`). Today's block carries the two things a separate Today list used to: a **→ Today** button when anything is overdue, and a **🌙 Tonight** section for `:tonight:` tasks. Then the fixed lists, then Areas with their projects (progress pies included):
 
 - **Inbox** — a triage holding area: open tasks outside any project note with no `SCHEDULED` or `DEADLINE` stamp. It's not tied to a location — planning a task or filing it into a project/Someday removes it automatically; clearing that stamp or removing it from a project puts it right back, so nothing gets lost by editing. Completing or cancelling removes it for good.
-- **Today** — open tasks scheduled or due today or earlier; overdue items surface at the top, flagged. Has a **Tonight** section for `:tonight:` tasks; flagging one also schedules it today if it wasn't already.
 - **Next** — everything marked `NEXT`. The actionable shortlist.
-- **Upcoming** — tasks dated after today, grouped by day: Tomorrow, weekday names this week, then `Jul 25`.
 - **Waiting** — everything marked `WAITING`: what's parked on someone else.
 - **Whenever** — open tasks in active projects with no scheduled date.
 - **Someday** — `SOMEDAY` tasks, `:someday:`-tagged tasks, and tasks in `status: someday` projects.
@@ -268,7 +266,7 @@ flowchart LR
 ```
 
 - **Indexer** does a full-vault scan on load. Unlike v1 it can't ask the metadataCache "does this file have checkboxes?" — keyword headlines aren't cached — so every candidate file is read through `cachedRead` (served from memory) behind a cheap regex pre-filter. Incremental updates come from `metadataCache.on('changed')`, debounced 250 ms per file. Tasks are reconciled by ID; missing IDs are written back (batched per file, bottom-up so line numbers stay valid) through `vault.process()`.
-- **Store** holds the task map; views subscribe through pure selectors (`buildAgenda`, `selectByKeyword`, `selectTodayGroups`, …). All mutations flow through store actions.
+- **Store** holds the task map; views subscribe through pure selectors (`buildAgenda`, `selectByKeyword`, `selectTodayTasks`, …). All mutations flow through store actions.
 - **Views** are a single registered `ItemView` hosting a React 18 app with an internal router.
 
 Performance targets: full reindex of 2,000 tasks < 500 ms, incremental file update < 10 ms. Enable "Debug performance logging" in settings to see timings in the console.

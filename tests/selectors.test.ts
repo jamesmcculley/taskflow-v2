@@ -16,9 +16,7 @@ import {
 	selectTasksByProject,
 	selectTodayGroups,
 	selectTodayTasks,
-	selectUpcomingGroups,
 	todayISO,
-	upcomingLabel,
 } from '../src/store/selectors';
 import { selectVisibleTasks } from '../src/store/visible';
 import type { ProjectInfo, Task } from '../src/types';
@@ -244,31 +242,6 @@ describe('selectAreaTasks', () => {
 	});
 });
 
-describe('selectUpcomingGroups / upcomingLabel', () => {
-	it('groups future tasks by effective date ascending, open only', () => {
-		const tasks = byId([
-			task({ id: 'a', scheduled: '2026-07-20' }),
-			task({ id: 'b', scheduled: '2026-07-19' }),
-			task({ id: 'c', scheduled: '2026-07-20', status: 'done' }),
-			task({ id: 'd', due: '2026-07-19' }),
-			task({ id: 'past', scheduled: '2026-07-18' }),
-			task({ id: 'undated' }),
-		]);
-		const groups = selectUpcomingGroups(tasks, TODAY);
-		expect(groups.map((g) => g.date)).toEqual(['2026-07-19', '2026-07-20']);
-		expect(groups[0]?.tasks.map((t) => t.id)).toEqual(['b', 'd']);
-		expect(groups[1]?.tasks.map((t) => t.id)).toEqual(['a']);
-	});
-
-	it('labels: Tomorrow, weekday within this week, then short date', () => {
-		// TODAY is Sat 2026-07-18; the week ends Sun 07-19.
-		expect(upcomingLabel('2026-07-19', TODAY)).toBe('Tomorrow');
-		expect(upcomingLabel('2026-07-19', '2026-07-17')).toBe('Sunday');
-		expect(upcomingLabel('2026-07-25', TODAY)).toMatch(/Jul(y)? 25/);
-		expect(upcomingLabel('2027-01-05', TODAY)).toMatch(/2027/);
-	});
-});
-
 describe('selectWheneverTasks / selectSomedayTasks', () => {
 	const tasks = byId([
 		task({ id: 'a', project: 'P/A.md', projectStatus: 'active' }),
@@ -372,10 +345,14 @@ describe('selectVisibleTasks', () => {
 	]);
 	const state = (filters = {}) => ({ tasks, projects: {}, filters: [], ...filters });
 
-	it('today: overdue first, then today', () => {
-		expect(
-			selectVisibleTasks({ kind: 'list', list: 'today' }, state(), TODAY).map((t) => t.id),
-		).toEqual(['over', 'now']);
+	// Today and Upcoming folded into the agenda: one dated view, windowed by
+	// span, so the agenda route must surface both the overdue and the near-future
+	// tasks those lists used to own.
+	it('agenda routes walk dated tasks across the window', () => {
+		const ids = selectVisibleTasks({ kind: 'agenda' }, state(), TODAY, { span: 14 }).map((t) => t.id);
+		expect(ids).toContain('over');
+		expect(ids).toContain('now');
+		expect(ids).toContain('soon');
 	});
 
 	it('project routes flatten heading groups', () => {
@@ -386,12 +363,6 @@ describe('selectVisibleTasks', () => {
 
 	it('history has no navigable tasks', () => {
 		expect(selectVisibleTasks({ kind: 'list', list: 'history' }, state(), TODAY)).toEqual([]);
-	});
-
-	it('upcoming flattens date groups in order', () => {
-		expect(
-			selectVisibleTasks({ kind: 'list', list: 'upcoming' }, state(), TODAY).map((t) => t.id),
-		).toEqual(['soon']);
 	});
 
 	it('filter routes resolve the saved filter', () => {

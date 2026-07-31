@@ -1,5 +1,11 @@
 # Decisions
 
+- **2026-07-31** — **Today and Upcoming folded into the Agenda.** They were three views of one set: every dated task appeared in the Agenda *and* in whichever of the two matched its date, so a task's presence in three places meant the same thing three times. Today is the agenda at `span=1`; Upcoming is the rest of the window. Org has neither list — they were v1's Things-style spine, carried through the port unexamined.
+
+  Today's block absorbed the two things the list did that the agenda didn't: a **→ Today** roll button when anything overdue is showing, and the **🌙 Tonight** split. Tonight is treated as a sub-order *within* today rather than a section of its own, because a `:tonight:` task is still scheduled today — it just wants reading last — and the flag means nothing on a future day, so only today's block splits on it.
+
+  What this costs: the agenda has no manual ordering, so drag-to-reorder is gone for dated work (it sorts by time, then deadline, then priority). The `list:today` and `list:today-evening` order maps in `data.json` are now inert; they're left alone rather than migrated, since they cost nothing and deleting user data to save bytes is a bad trade. `selectUpcomingGroups`, `upcomingLabel`, and `compareByEffectiveDate` went with the lists.
+
 - **2026-07-31** — **The review spans a week, a month or a quarter, and highlights roll upward.** The old review was a guided triage walkthrough (Inbox → overdue → projects → Someday), which is hygiene, not reflection — and hygiene the Inbox count already nags you about. What it didn't do is answer "what did I actually get done, and what am I aiming at next", which is the question that gets asked at the end of a month or a quarter and is impossible to answer from memory by then.
 
   The look-back is built from the **completion log, not live tasks**: work that was finished and then edited, moved, or deleted still happened. It groups by **area, then project**, because that's how a stretch of work is accounted for, and because the grouping still reads months later when the individual titles have gone cold.

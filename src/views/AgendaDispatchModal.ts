@@ -25,7 +25,6 @@ const ENTRIES: DispatchEntry[] = [
 	{ key: 'n', label: 'NEXT actions', description: 'Tasks marked NEXT', route: { kind: 'list', list: 'next' } },
 	{ key: 'W', label: 'WAITING on', description: 'Blocked or delegated tasks', route: { kind: 'list', list: 'waiting' } },
 	{ key: 'i', label: 'Inbox', description: 'Unfiled, undated tasks', route: { kind: 'list', list: 'inbox' } },
-	{ key: 'u', label: 'Upcoming', description: 'Dated after today, grouped by day', route: { kind: 'list', list: 'upcoming' } },
 	{ key: 's', label: 'Someday', description: 'Deferred tasks and projects', route: { kind: 'list', list: 'someday' } },
 	{ key: 'l', label: 'History', description: 'The completion log, newest first', route: { kind: 'list', list: 'history' } },
 	{ key: 'R', label: 'Review', description: 'Look back and ahead over a week, month or quarter', route: { kind: 'review' } },

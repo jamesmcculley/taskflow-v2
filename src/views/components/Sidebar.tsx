@@ -20,9 +20,7 @@ import { ProgressPie } from './ProgressPie';
 
 export const LIST_META: { list: ListId; label: string; icon: string }[] = [
 	{ list: 'inbox', label: 'Inbox', icon: 'inbox' },
-	{ list: 'today', label: 'Today', icon: 'sun' },
 	{ list: 'next', label: 'Next', icon: 'chevrons-right' },
-	{ list: 'upcoming', label: 'Upcoming', icon: 'calendar' },
 	{ list: 'waiting', label: 'Waiting', icon: 'pause-circle' },
 	{ list: 'whenever', label: 'Whenever', icon: 'list-todo' },
 	{ list: 'someday', label: 'Someday', icon: 'archive' },
@@ -112,9 +110,6 @@ export function Sidebar({
 					<span className="tf2-nav-label">{label}</span>
 					{list === 'inbox' && counts.inbox > 0 && (
 						<span className="tf2-nav-count">{counts.inbox}</span>
-					)}
-					{list === 'today' && counts.today > 0 && (
-						<span className="tf2-nav-count">{counts.today}</span>
 					)}
 					{list === 'next' && counts.next > 0 && (
 						<span className="tf2-nav-count">{counts.next}</span>
